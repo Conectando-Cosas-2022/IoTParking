@@ -21,10 +21,9 @@
     getNotificationsRequest(req){
         var user = GetUser(req);
         var notifHandler = new NotificationHandler();
-        var notif = notifHandler.getNotifications();
+        var notif = notifHandler.getNotifications(user);
 
-        
-
+        //Aca se deberia devolver la respuesta
     }
 
     notifyRequest(){
