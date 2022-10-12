@@ -10,23 +10,31 @@
         <header>
             
         </header>
+        <script	>
+            function atrasClick(){
+                
+                window.location.replace("LoginPage.html");
+                alert("a");
+            }
+        </script>
         <h1 id="titulo">Registro</h1>
 
-        <section id="seccionRegistro">
-            <form id="formPersonas">
-                <br>
-                <label for="idNombre">Nombre de usuario:</label>
-                <input type="text" id="idNombre" placeholder="Nombre de usuario" maxlength="20" class="cajasTexto" required>
-                <br><br>
-                <label for="idSeccion">Contraseña</label>
-                <input type="text" id="idContraseña" placeholder="Constraseña" maxlength="10" class="cajasTexto" required>
-                <br><br>
-                <label for="idMail">Confirmar contraseña</label>
-                <input type="password" id="idConfirmarContraseña" placeholder="Confirmar contraseña" class="cajasTexto" required>
-                <br><br>
+        <form id="formPersonas">
+            <label for="idNombre">Nombre de usuario:</label>
+            <input type="text" id="idNombre" placeholder="Nombre de usuario" maxlength="20" class="cajasTexto">
+            <br><br>
+            <label for="idSeccion">Contraseña</label>
+            <input type="password" id="idContraseña" placeholder="Contraseña" maxlength="10" class="cajaTexto">
+            <br><br>
+            <label for="idMail">Confirmar contraseña</label>
+            <input type="password" id="idConfirmarContraseña" placeholder="Confirmar contraseña" class="cajasTexto">
+            <br><br>
+            <div>
+                <button onclick="atrasClick()">Atras</button>
                 <input type="button" id="idRegistrarse" value="Registrarse" class="botones">
-            </form>
-        </section>
+            </div>
+            
+        </form>
 
     </body>
 
