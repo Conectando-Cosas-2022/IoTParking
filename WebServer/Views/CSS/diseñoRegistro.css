@@ -6,12 +6,18 @@
 #seccionRegistro{
     background-color: rgb(188, 163, 228);
     border-radius: 10px;
-    text-align: center;
+    padding-left: 25%;
+    padding-right: 25%;
 }
 
 #titulo{
     background-color: rgb(188, 163, 228);
     border-radius: 10px;
-    text-align: center;
-    font-style: italic;
+    padding-left: 25%;
+    padding-right: 25%;
+    font-style: normal;
+}
+
+#idBtnRegistrarse{
+    border-radius: 10px;
 }
