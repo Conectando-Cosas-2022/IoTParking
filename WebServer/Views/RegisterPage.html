@@ -10,6 +10,13 @@
         <header>
             
         </header>
+        <script	>
+            function atrasClick(){
+                
+                window.location.replace("LoginPage.html");
+                alert("a");
+            }
+        </script>
         <h1 id="titulo">Registro</h1>
 
         <section id="seccionRegistro">
@@ -24,8 +31,11 @@
                 <label for="lblConfirmarContraseña">Confirmar contraseña</label>
                 <input type="password" id="idConfirmarContraseña" placeholder="Confirmar contraseña" maxlength="10" class="cajasTexto">
                 <br><br>
-                <input type="button" id="idBtnRegistrarse" value="Registrarse" class="botones">
-                <br><br>
+                  <div>
+                <button onclick="atrasClick()">Atras</button>
+                <input type="button" id="idRegistrarse" value="Registrarse" class="botones">
+               </div>
+                
             </form>
         </section>
 
