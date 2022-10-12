@@ -1,0 +1,17 @@
+
+.cajasTexto {
+ border-radius: 10px;
+}
+
+#seccionRegistro{
+    background-color: rgb(188, 163, 228);
+    border-radius: 10px;
+    text-align: center;
+}
+
+#titulo{
+    background-color: rgb(188, 163, 228);
+    border-radius: 10px;
+    text-align: center;
+    font-style: italic;
+}

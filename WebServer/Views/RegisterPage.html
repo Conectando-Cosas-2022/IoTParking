@@ -3,26 +3,30 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="initial-scale=1.0">
+        <link rel="stylesheet" href="CSS/diseñoRegistro.css">
         <title>Registro IoTParking</title>
     </head>
     <body>
         <header>
             
         </header>
-        <h1>Registro</h1>
+        <h1 id="titulo">Registro</h1>
 
-        <form id="formPersonas">
-            <label for="idNombre">Nombre de usuario:</label>
-            <input type="text" id="idNombre" placeholder="Nombre de usuario" maxlength="20" class="cajasTexto" required>
-            <br><br>
-            <label for="idSeccion">Contraseña</label>
-            <input type="text" id="idContraseña" placeholder="Constraseña" maxlength="10" class="cajaTexto" required>
-            <br><br>
-            <label for="idMail">Confirmar contraseña</label>
-            <input type="email" id="idConfirmarContraseña" placeholder="Confirmar contraseña" class="cajasTexto" required>
-            <br><br>
-            <input type="button" id="idRegistrarse" value="Registrarse" class="botones">
-        </form>
+        <section id="seccionRegistro">
+            <form id="formPersonas">
+                <br>
+                <label for="idNombre">Nombre de usuario:</label>
+                <input type="text" id="idNombre" placeholder="Nombre de usuario" maxlength="20" class="cajasTexto" required>
+                <br><br>
+                <label for="idSeccion">Contraseña</label>
+                <input type="text" id="idContraseña" placeholder="Constraseña" maxlength="10" class="cajasTexto" required>
+                <br><br>
+                <label for="idMail">Confirmar contraseña</label>
+                <input type="password" id="idConfirmarContraseña" placeholder="Confirmar contraseña" class="cajasTexto" required>
+                <br><br>
+                <input type="button" id="idRegistrarse" value="Registrarse" class="botones">
+            </form>
+        </section>
 
     </body>
 
