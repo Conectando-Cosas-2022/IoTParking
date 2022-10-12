@@ -1,0 +1,18 @@
+.container {
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr; 
+    grid-template-rows: 1fr 0.4fr 0.4fr 0.4fr 2.8fr; 
+    gap: 0px 0px; 
+    grid-template-areas: 
+      ". Logo ."
+      ". TextBox1 ."
+      ". TextBox2 ."
+      ". Boton ."
+      ". Pregunta ."; 
+      justify-items: center;
+  }
+  .Logo { grid-area: Logo; }
+  .TextBox1 { grid-area: TextBox1; }
+  .TextBox2 { grid-area: TextBox2; }
+  .Boton { grid-area: Boton; }
+  .Pregunta { grid-area: Pregunta; }
