@@ -3,7 +3,11 @@ const express = require('express')
 const tessereact = require("tesseract.js");
 const fs = require("fs");
 const path = require("path");
+const bodyParser = require("body-parser");
 const sqlClient = require("mssql");
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const app = express()
 app.use(express.static('WebServer/Views'))
