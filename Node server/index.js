@@ -3,6 +3,7 @@ const express = require('express')
 const tessereact = require("tesseract.js");
 const fs = require("fs");
 const path = require("path");
+const sqlClient = require("")
 
 const app = express()
 app.use(express.static('WebServer/Views'))
@@ -56,6 +57,28 @@ app.get('/Register', (req, res) => {
 
 })
 
+app.get('/main',(req,res)=>{
+    res.sendFile(path.join(__dirname,'WebServer/Views/MainPage.html'));
+});
+
+app.get('/notifications',(req,res)=>{
+  res.sendFile(path.join(__dirname,'WebServer/Views/NotificationsPage.html'));
+});
+
+app.get('/registerplate',(req,res)=>{
+  
+  res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPlatePage.html'));
+});
+
+app.post('/registerUser',(req,res)=>{
+  
+
+});
+
+app.post('/loginUser',(req,res)=>{
+  
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+});
