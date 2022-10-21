@@ -65,6 +65,36 @@ void setup() {
  });
 }
 
+//Esto se deberia ejecutar en el ESP32
+void sensorDetected(){
+  /*
+    Se detecto algo
+    Se guarda los datos de la foto en img
+    Se envia img a thingsboard y se espera la respuesta
+      Si es positiva se abre la puerta hasta que no se detecte nada en el sensor
+        y se manda al display
+      Si es negativa no se hace nada
+
+  */
+
+}
+
+void openGate(int gateid){
+  /*
+    Se recibe una gateid (un numero entre 1 y 4)
+    Se abre la puerta y queda abierta.
+
+  */
+
+}
+
+void closeGate(int gateid){
+  /*
+    Se recibe el gateid
+    Se cierra la puerta
+  */
+
+}
 
 void loop() {
  

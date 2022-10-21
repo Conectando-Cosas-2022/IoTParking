@@ -3,7 +3,7 @@ const express = require('express')
 const tessereact = require("tesseract.js");
 const fs = require("fs");
 const path = require("path");
-const sqlClient = require("")
+const sqlClient = require("mssql");
 
 const app = express()
 app.use(express.static('WebServer/Views'))
@@ -71,13 +71,91 @@ app.get('/registerplate',(req,res)=>{
 });
 
 app.post('/registerUser',(req,res)=>{
-  
+  /*
+   *
+   Se obtiene el nombre de usuario
+   Se obtiene la contraseña
+
+   Si no existe un usuario con ese nombre
+    se ingresa
+  Sino
+    Se envia un response code de error
+   */
+
+
 
 });
 
 app.post('/loginUser',(req,res)=>{
-  
+  /*
+    Se obtiene el nombre de usuario
+    Se obtiene la contraseña,
+
+    Se intenta ingresar
+    Si se ingresa
+      Se guarda una cookie con una clave que identifica el usuario (el userID)
+    Sino 
+      Se envia el response code de error
+  */
 });
+
+app.post("/savePlate",(req,res)=>{
+  /**
+   * 
+   Se obtiene el UserID apartir de la cookie
+    Si tiene la cookie
+      Agarro la matricula
+      Si no esta ingresada
+        la ingreso
+      Sino
+        mando error en response
+    Sino
+      Se manda login.html
+
+   * 
+   */
+
+});
+
+app.post("/saveReservation",(req,res)=>{
+  /**
+   * 
+   Se obtiene el UserID apartir de la cookie
+    Si tiene la cookie
+        Agarro la hora
+        Agarro la matricula
+        creo la reserva
+      Si no esta ingresada la reserva
+        la ingreso
+      Sino
+        mando error en response
+    Sino
+      Se manda login.html
+
+   * 
+   */
+
+});
+
+app.get("/registeredPlates",(req,res)=>{
+  /*
+    Te fijas lo del login (sino mando a pagina de login)
+      Obtenes el id de usuario
+      Mandas las matriculas con ese ID de usuario
+  
+  */
+});
+
+app.get("/registeredReservations",(req,res)=>{
+  /*
+    Te fijas si esta logeado (sino mando login)
+      Obtengo la hora
+      en la base de datos, hay que revisar todas las reservas que se den dentro de ese periodo de tiempo
+      las mando
+  */
+});
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
