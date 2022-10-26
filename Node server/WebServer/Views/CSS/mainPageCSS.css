@@ -1,0 +1,35 @@
+#titulo{
+    background-color:rgb(238, 97, 54) ;
+    border-radius: 10px;
+    padding-left: 25%;
+    padding-right: 25%;
+    font-style: normal;
+}
+
+.labels{
+    font-size: 20px;
+}
+
+#idMenu{
+    background-color: brown;
+    border-radius: 10px;
+}
+
+#idReservas{
+    font-size: 30px;
+    padding-left: 35%;
+    padding-right: 35%;
+}
+
+
+.botones{
+    border-radius: 25px;
+    background-color: beige;
+}
+
+#seccionMain{
+    background-color: rgb(238, 97, 54);
+    border-radius: 10px;
+    padding-left: 25%;
+    padding-right: 25%;
+}
