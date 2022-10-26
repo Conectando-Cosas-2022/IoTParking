@@ -6,9 +6,12 @@ class DbHelper{
         let config = {
             user: "AdminUser",
             password: "admin",
-            server: "127.0.0.1",
+            server: "localhost",
             database: "Iotparking",
-            port:1433
+            port:1433,
+	   options:{
+		trustServerCertificate: true
+	}
         };
 
         this.sql.connect(config,(err)=>{
