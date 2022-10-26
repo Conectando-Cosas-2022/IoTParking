@@ -4,10 +4,11 @@ class DbHelper{
         this.sql = require("mssql");
 
         let config = {
-            user: "Admin",
-            password: "proyecto2!server",
-            server: "20.226.31.138",
-            database: "Iotparking"
+            user: "AdminUser",
+            password: "admin",
+            server: "127.0.0.1",
+            database: "Iotparking",
+            port:1433
         };
 
         this.sql.connect(config,(err)=>{
