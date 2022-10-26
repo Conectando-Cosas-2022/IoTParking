@@ -4,7 +4,9 @@ const tessereact = require("tesseract.js");
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
-const sqlClient = require("mssql");
+let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
+let sqlHelper = new DbHelper();
+
 const cookieParser = require("cookie-parser");
 
 const app = express()
@@ -76,7 +78,9 @@ app.get('/registerplate',(req,res)=>{
   res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPlatePage.html'));
 });
 
-app.post('/registerUser',(req,res)=>{
+
+
+app.post('/registerUser', async (req,res)=>{
   /*
    *
    Se obtiene el nombre de usuario
@@ -87,6 +91,26 @@ app.post('/registerUser',(req,res)=>{
   Sino
     Se envia un response code de error
    */
+
+  let username = req.body.username;
+  let password = req.body.password;
+
+  if(sqlHelper.userExists(username)){
+      await sqlHelper.addUser(username,password);
+      
+      res.send({
+        error:false,
+        msg: "Usuario creado!"
+      });
+
+  }else{
+    res.send({
+      error: true,
+      msg: "Ya existe un usuario con ese nombre"
+    });
+
+    
+  }
 
 
 
