@@ -1,0 +1,23 @@
+CREATE TABLE Reservas
+(
+    ID int identity(1,1) not null primary key,
+    ID_Matricula INT not null, 
+    Fecha_Reserva DATETIME not null ,
+	Duracion int not null,
+	FOREIGN KEY (ID_Matricula) References Matriculas(ID_Matricula)
+);
+
+CREATE TABLE Matriculas
+(
+    ID_Matricula int identity(1,1) not null primary key,
+    Matricula varchar(9) not null, 
+    ID_Usuario int not null 
+	FOREIGN KEY (ID_Usuario) References Usuarios(ID)
+);
+
+CREATE TABLE Usuarios
+(
+    ID int identity(1,1) not null primary key,
+    Nombre varchar(100) not null, 
+    Password varchar(100) not null
+);

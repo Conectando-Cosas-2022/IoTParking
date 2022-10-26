@@ -11,7 +11,7 @@ class DbHelper{
             port:1433,
 	   options:{
 		trustServerCertificate: true
-	}
+	    }
         };
 
         this.sql.connect(config,(err)=>{
@@ -21,7 +21,7 @@ class DbHelper{
 
     async userExists(username){
         let users = await this.sql.query`select * from Usuarios where Nombre = ${username}`;
-        if(users.recordsets.length > 0){
+        if(users.recordset.length > 0){
             return true;
         }else{
             return false;
@@ -30,9 +30,10 @@ class DbHelper{
 
     async addUser(username,password){
         try{
-            await this.sql.query`ìnsert into Usuarios (Nombre,Password) VALUES (${username},${password})`;
+            await this.sql.query`INSERT INTO [dbo].[Usuarios] (Nombre,Password) values (${username},${password})`;
             
         }catch(ex){
+            console.log(ex);
             throw ex;
         }
     }

@@ -11,7 +11,7 @@ const cookieParser = require("cookie-parser");
 
 const app = express()
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static('WebServer/Views'))
@@ -94,10 +94,10 @@ app.post('/registerUser', async (req,res)=>{
 
   let username = req.body.username;
   let password = req.body.password;
-
-  if(sqlHelper.userExists(username)){
+  let exists = await sqlHelper.userExists(username);
+  if(!exists){
       await sqlHelper.addUser(username,password);
-      
+
       res.send({
         error:false,
         msg: "Usuario creado!"
