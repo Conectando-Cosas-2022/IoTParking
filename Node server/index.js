@@ -78,7 +78,13 @@ app.get('/registerplate',(req,res)=>{
   res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPlatePage.html'));
 });
 
+function sendRegisterPage(res){
+  res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPage.html'));
+}
 
+function sendLoginPage(res){
+  res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
+}
 
 app.post('/registerUser', async (req,res)=>{
   /*
@@ -116,20 +122,40 @@ app.post('/registerUser', async (req,res)=>{
 
 });
 
-app.post('/loginUser',(req,res)=>{
-  /*
-    Se obtiene el nombre de usuario
-    Se obtiene la contraseña,
+app.post('/loginUser', async (req,res)=>{
+      let username = req.body.username;
+      let password = req.body.password;
+      let exists = await sqlHelper.userExists(username);
+  if(!exists){
+      res.send({
+        error:true,
+        msg: "No existe un usuario con ese nombre"
+      });
 
-    Se intenta ingresar
-    Si se ingresa
-      Se guarda una cookie con una clave que identifica el usuario (el userID)
-    Sino 
-      Se envia el response code de error
-  */
+  }else{
+    if(await sqlHelper.loginUser(username,password)){
+        let user = await sqlHelper.getUser(username);
+        res.cookie('UserID',user.ID, { maxAge: 900000, httpOnly: true });
+
+        res.send({
+          error:false,
+          msg:"Logeado con exito"
+        });
+
+    }else{
+      
+      res.send({
+        error:true,
+        msg:"Contraseña incorrecta"
+      });
+
+    }
+
+    
+  }
 });
 
-app.post("/savePlate",(req,res)=>{
+app.post("/savePlate",async (req,res)=>{
   /**
    * 
    Se obtiene el UserID apartir de la cookie
@@ -144,6 +170,30 @@ app.post("/savePlate",(req,res)=>{
 
    * 
    */
+
+      var userID = req.cookies.UserID;
+      if(userID != null){
+          var plateNumber = req.body.plateNumber;
+          if(!(await sqlHelper.plateExists(plateNumber))){
+            await sqlHelper.addPlate(userID,plateNumber);
+            
+            res.send({
+              error:false,
+              msg:"Matricula ingresada con exito"
+            })
+
+          }else{
+            res.send({
+              error:true,
+              msg:"Esa matricula ya fue ingresada"
+            });
+
+          }
+
+
+      }else{
+        sendLoginPage(res);
+      }
 
 });
 

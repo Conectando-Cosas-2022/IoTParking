@@ -1,3 +1,6 @@
+const Usuario = require("../Model/User");
+
+
 class DbHelper{
 
     constructor(){
@@ -38,6 +41,48 @@ class DbHelper{
         }
     }
 
+    async loginUser(username,password){
+        let user = await this.sql.query`select * from Usuarios where Nombre = ${username} and Password = ${password}`;
+        if(user.recordset.length > 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    async getUser(username,password){
+        let user = await this.sql.query`select * from Usuarios where Nombre = ${username}`;
+        if(user.recordset.length > 0){
+            return new Usuario(
+                user.recordset[0].ID,
+                user.recordset[0].Nombre,
+                user.recordset[0].Password);
+        }else{
+            return null;
+        }
+    }
+
+    async plateExists(plateNumber){
+        let plate = await this.sql.query`select * from Matriculas where Matricula = ${plateNumber}`;
+        if(plate.recordset.length > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    async addPlate(userID,plateNumber){
+        try{
+            await this.sql.query`INSERT INTO [dbo].[Matriculas] (Matricula,ID_Usuario) values (${plateNumber},${userID})`;
+            
+        }catch(ex){
+            console.log(ex);
+            throw ex;
+        }
+
+
+    }
 
 
 }
