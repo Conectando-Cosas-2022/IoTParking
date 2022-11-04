@@ -21,6 +21,8 @@ unsigned long previousMillis = 0;   // last time image was sent
 
 #include "camera_pins.h"
 
+
+
 void setup() {
   Serial.begin(115200);
 
@@ -87,13 +89,6 @@ void setup() {
   sendPhoto(); 
 }
 
-void loop() {
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= timerInterval) {
-    sendPhoto();
-    previousMillis = currentMillis;
-  }
-}
 
 String sendPhoto() {
   String getAll;
@@ -169,4 +164,12 @@ String sendPhoto() {
     Serial.println(getBody);
   }
   return getBody;
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= timerInterval) {
+    sendPhoto();
+    previousMillis = currentMillis;
+  }
 }
