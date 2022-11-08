@@ -86,6 +86,10 @@ function sendLoginPage(res){
   res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
 }
 
+app.post("/uploads",(req,res)=>{
+  
+});
+
 app.post('/registerUser', async (req,res)=>{
   /*
    *

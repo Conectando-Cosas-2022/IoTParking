@@ -1,0 +1,45 @@
+#titulo{
+    width: fit-content;
+    margin: 0 auto;
+    background-color:rgb(128, 122, 120) ;
+    border-radius: 10px;
+}
+
+/*#seccionRegistro{
+    width: fit-content;
+    margin: 0 auto;
+    background-color: rgb(238, 97, 54);
+    border-radius: 10px;
+}*/
+
+#divLblRegistro{
+    display: flex;
+    background-color:rgb(128, 122, 120) ;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+}
+
+#divBtnRegistro{
+    display: flex;
+    background-color:rgb(128, 122, 120) ;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+}
+
+#cajaTextoRegistroPlate{
+    border-radius: 10px;
+}
+
+#idRegistroPlate{
+    border-radius: 10px;
+}
+
+#body{
+    background-color: rgb(75, 73, 73);
+}
+
+/*
+    background-color: rgb(238, 97, 54);
+*/
