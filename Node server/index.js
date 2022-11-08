@@ -156,20 +156,6 @@ app.post('/loginUser', async (req,res)=>{
 });
 
 app.post("/savePlate",async (req,res)=>{
-  /**
-   * 
-   Se obtiene el UserID apartir de la cookie
-    Si tiene la cookie
-      Agarro la matricula
-      Si no esta ingresada
-        la ingreso
-      Sino
-        mando error en response
-    Sino
-      Se manda login.html
-
-   * 
-   */
 
       var userID = req.cookies.UserID;
       if(userID != null){
@@ -197,7 +183,7 @@ app.post("/savePlate",async (req,res)=>{
 
 });
 
-app.post("/saveReservation",(req,res)=>{
+app.post("/saveReservation",async (req,res)=>{
   /**
    * 
    Se obtiene el UserID apartir de la cookie
@@ -214,6 +200,37 @@ app.post("/saveReservation",(req,res)=>{
 
    * 
    */
+    let userID = req.cookies.UserID;
+    if(userID != null){
+      var day = req.params.day;
+      var month = req.params.month;
+      var year = req.params.year;
+      var time = req.params.time;
+
+      let plate = req.params.plateNumber;
+
+      var parsedDate = sqlHelper.parseDate(day,month,year,time);
+      //Revisar reservas que se solapen
+
+      if(!sqlHelper.reservationExists(plate,parsedDate)){
+        
+        sqlHelper.addReservation(plate,parsedDate);
+
+
+      }else{
+
+        res.send({
+          error:true,
+          msg: "Ya existe una reserva en ese periodo"
+        })
+      }
+
+
+    }else{
+      sendLoginPage(res);
+    }
+
+
 
 });
 
@@ -224,6 +241,8 @@ app.get("/registeredPlates",(req,res)=>{
       Mandas las matriculas con ese ID de usuario
   
   */
+
+      
 });
 
 app.get("/registeredReservations",(req,res)=>{
