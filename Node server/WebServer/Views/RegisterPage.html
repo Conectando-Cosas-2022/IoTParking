@@ -4,19 +4,14 @@
     
         <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="CSS/diseñoRegistro.css">
+        <script src="./JS/Register.js"></script>
         <title>Registro IoTParking</title>
     </head>
     <body>
         <header>
             
         </header>
-        <script	>
-            function atrasClick(){
-                
-                window.location.replace("LoginPage.html");
-                alert("a");
-            }
-        </script>
+
         <h1 id="titulo">Registro</h1>
 
         <section id="seccionRegistro">
@@ -32,9 +27,10 @@
                 <input type="password" id="idConfirmarContraseña" placeholder="Confirmar contraseña" maxlength="10" class="cajasTexto">
                 <br><br>
                   <div>
-                <a href="/">Atras</button>
+                <a>Atras</a>
                 <br>
-                <input type="button" id="idRegistrarse" value="Registrarse" class="botones">
+
+                <input type="button" id="idRegistrarse" value="Registrarse" onclick="registerClick()" class="botones">
                </div>
                 
             </form>

@@ -8,6 +8,7 @@ let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
 let sqlHelper = new DbHelper();
 
 const cookieParser = require("cookie-parser");
+const { json } = require('body-parser');
 
 const app = express()
 app.use(cookieParser());
@@ -74,8 +75,11 @@ app.get('/notifications',(req,res)=>{
 });
 
 app.get('/registerplate',(req,res)=>{
-  
-  res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPlatePage.html'));
+  if(req.cookies.UserID){
+    res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPlatePage.html'));
+  }else{
+    res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
+  }
 });
 
 function sendRegisterPage(res){
@@ -83,7 +87,11 @@ function sendRegisterPage(res){
 }
 
 function sendLoginPage(res){
-  res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
+  res.send({
+    error:true,
+    msg:"Error",
+    redirect: "/"
+  })
 }
 
 app.post("/uploads",(req,res)=>{
@@ -101,22 +109,26 @@ app.post('/registerUser', async (req,res)=>{
   Sino
     Se envia un response code de error
    */
-
+  console.log("REQUEST: "+JSON.stringify(req.body));
   let username = req.body.username;
   let password = req.body.password;
+  console.log("username es:"+username);
   let exists = await sqlHelper.userExists(username);
+
   if(!exists){
       await sqlHelper.addUser(username,password);
 
       res.send({
         error:false,
-        msg: "Usuario creado!"
+        msg: "Usuario creado!",
+        redirect:""
       });
 
   }else{
     res.send({
       error: true,
-      msg: "Ya existe un usuario con ese nombre"
+      msg: "Ya existe un usuario con ese nombre",
+      redirect:""
     });
 
     
@@ -133,24 +145,28 @@ app.post('/loginUser', async (req,res)=>{
   if(!exists){
       res.send({
         error:true,
-        msg: "No existe un usuario con ese nombre"
+        msg: "No existe un usuario con ese nombre",
+        redirect:""
       });
 
   }else{
     if(await sqlHelper.loginUser(username,password)){
         let user = await sqlHelper.getUser(username);
         res.cookie('UserID',user.ID, { maxAge: 900000, httpOnly: true });
-
+        res.cookie('UserName',user.Nombre, { maxAge: 900000, httpOnly: true });
+        
         res.send({
           error:false,
-          msg:"Logeado con exito"
+          msg:"Logeado con exito",
+          redirect:""
         });
 
     }else{
       
       res.send({
         error:true,
-        msg:"Contraseña incorrecta"
+        msg:"Contraseña incorrecta",
+        redirect:""
       });
 
     }
@@ -169,13 +185,15 @@ app.post("/savePlate",async (req,res)=>{
             
             res.send({
               error:false,
-              msg:"Matricula ingresada con exito"
+              msg:"Matricula ingresada con exito",
+              redirect:""
             })
 
           }else{
             res.send({
               error:true,
-              msg:"Esa matricula ya fue ingresada"
+              msg:"Esa matricula ya fue ingresada",
+              redirect:""
             });
 
           }
@@ -225,7 +243,8 @@ app.post("/saveReservation",async (req,res)=>{
 
         res.send({
           error:true,
-          msg: "Ya existe una reserva en ese periodo"
+          msg: "Ya existe una reserva en ese periodo",
+          redirect:""
         })
       }
 
