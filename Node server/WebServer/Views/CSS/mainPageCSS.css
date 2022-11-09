@@ -1,33 +1,67 @@
-#titulo{
-    background-color:rgb(238, 97, 54) ;
-    border-radius: 10px;
-    padding-left: 25%;
-    padding-right: 25%;
-    font-style: normal;
+#body {
+    background-color: rgb(75, 73, 73);
 }
 
-.labels{
-    font-size: 20px;
-}
-
-#idMenu{
-    background-color: brown;
+#titulo {
+    width: fit-content;
+    margin: 0 auto;
+    background-color: rgb(128, 122, 120);
     border-radius: 10px;
 }
 
-#idReservas{
-    font-size: 30px;
-    padding-left: 35%;
-    padding-right: 35%;
+#idMenu {
+    background-color: rgb(128, 122, 120);
+    border-radius: 10px;
 }
 
+#divUnionRegistroCambioPlate {
+    background-color: rgb(128, 122, 120);
+    border-radius: 10px;
+}
 
-.botones{
+.column {
+    float: left;
+    width: 33.33%;
+}
+
+#idDivLblRegistroCambioPlate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 25px;
-    background-color: beige;
 }
 
-#seccionMain{
+#idDivBtnRegistroCambioPlate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+}
+
+#idDivLugarAsignado {
+    display: flex;
+    background-color: rgb(128, 122, 120);
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+#idNotificaciones {
+    text-align: left;
+}
+
+#idReservaIcono {
+    /*text-align: center;*/
+    /*vertical-align: middle;*/
+    justify-content: center;
+    margin: auto;
+}
+
+.botones {
+    border-radius: 25px;
+}
+
+#seccionMain {
     background-color: rgb(238, 97, 54);
     border-radius: 10px;
     padding-left: 25%;

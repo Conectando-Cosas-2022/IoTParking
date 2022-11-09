@@ -7,29 +7,46 @@
     <title>Sitio principal IoTParking</title>
 </head>
 
-<body>
+<body id="body">
     <header>
     </header>
-    <h1 id="titulo">IoT Parking</h1>
+    <h1 id="titulo" style="color: white"> IoT Parking </h1>
+    <br>
+    <br>
+    <div id="idMenu">
+        <div id="campanita" class="column">
+            <a href=#Notificaciones><img src="img/campanaChica.png" id="idNotificaciones" alt="#Notificaciones.png" class="iconos"></a>
+        </div>
+        <div id="logoReservas" class="column">
+            <a href=#Reservas id="idReservas"><img src="img/reservas.png" id="idReservaIcono" alt="Reservas.png"></a>
+        </div>
+        <div id="logoConsultas" class="column">
+            <a href=#Consultas><img src="img/preguntas.png" id="preguntas" alt="Preguntas.png" class="iconos"></a>
+        </div>
+    </div>
+    <br><br>
+    <br><br>
+    <div id="divUnionRegistroCambioPlate">
+        <div id="idDivLblRegistroCambioPlate">
+            <br><br>
+            <label for="idRegistroCambioPlate" class="labels" style="color: white">¿Quieres registrar o cambiar tu
+                número de matrícula?</label>
+            <br>
+        </div>
+        <div id="idDivBtnRegistroCambioPlate">
+            <input type="button" id="idRegistroCambioPlate" value="Registro o cambio" class="botones">
+        </div>
+    </div>
 
-    <section id="idMenu">
-        <a href=#Notificaciones><img src="img/campanaChica.png" id="idNotificaciones" alt="#Notificaciones.png" class="iconos"></a>
-        <a href=#Reservas id="idReservas"><img src="img/reservas.png" id = "idReservaIcono" alt="Reservas.png"></a>
-        <a href=#Consultas><img src="img/preguntas.png" id="preguntas" alt="Preguntas.png" class="iconos"></a>
-    </section>
-    <br>
-    <br>
-    <section id="seccionMain">
-        <br><br>
-        <label for="idRegistroCambioPlate" class="labels">¿Quieres registrar o cambiar tu número de matrícula?</label>
-        <br>
-        <input type="button" id="idRegistroCambioPlate" value="Registro o cambio" class="botones">
-        <br><br>
-        <label for="idLugarAsignado" class="labels">Ve tu lugar lugar asignado</label>
-        <br>
+    <br><br>
+    <div id="idDivLugarAsignado">
+        <label for="idLugarAsignado" class="labels" style="color: white">Ve tu lugar lugar asignado</label>
         <input type="button" id="idLugarAsignado" value="Lugar asignado" class="botones">
         <br><br>
-    </section>
+    </div>
+    <br><br>
+
+
 
 </body>
 
