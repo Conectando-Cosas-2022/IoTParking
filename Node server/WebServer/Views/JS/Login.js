@@ -1,13 +1,8 @@
+async function loginClick(){
+    var user = document.getElementById("TxtName").value;
+    var pass = document.getElementById("TxtPassword").value;
 
-
-
-async function registerClick(){
-    var user = document.getElementById("idNombre").value;
-    var pass = document.getElementById("idContraseña").value;
-    var confirmedPass = document.getElementById("idConfirmarContraseña").value;
-
-    if(pass == confirmedPass){
-        let response = await registerPost(user,pass);
+        let response = await loginPost(user,pass);
 
         let data = await response.json();
             alert(data.msg);
@@ -16,13 +11,11 @@ async function registerClick(){
                 window.location.href = data.redirect;
             }
     
-    }else{
-        alert("Las contraseñas no son iguales");
-    }
+   
 }
 
 
-async function registerPost(user, pass){
+async function loginPost(user, pass){
 
 
         request = {
@@ -30,7 +23,7 @@ async function registerPost(user, pass){
             password: pass
         };
 
-    const response = await fetch("registerUser", {
+    const response = await fetch("loginUser", {
         method: "POST",
         headers: {
             'Accept': 'application/json',
