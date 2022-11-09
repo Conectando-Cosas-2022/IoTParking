@@ -9,11 +9,6 @@
     border-radius: 10px;
 }
 
-#idMenu {
-    background-color: rgb(128, 122, 120);
-    border-radius: 10px;
-}
-
 #divUnionRegistroCambioPlate {
     background-color: rgb(128, 122, 120);
     border-radius: 10px;
@@ -22,6 +17,7 @@
 .column {
     float: left;
     width: 33.33%;
+    background-color: rgb(128, 122, 120);
 }
 
 #idDivLblRegistroCambioPlate {
