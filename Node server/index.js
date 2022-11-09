@@ -8,6 +8,7 @@ let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
 let sqlHelper = new DbHelper();
 
 const cookieParser = require("cookie-parser");
+const { json } = require('body-parser');
 
 const app = express()
 app.use(cookieParser());
@@ -101,10 +102,12 @@ app.post('/registerUser', async (req,res)=>{
   Sino
     Se envia un response code de error
    */
-
+  console.log("REQUEST: "+JSON.stringify(req.body));
   let username = req.body.username;
   let password = req.body.password;
+  console.log("username es:"+username);
   let exists = await sqlHelper.userExists(username);
+
   if(!exists){
       await sqlHelper.addUser(username,password);
 
