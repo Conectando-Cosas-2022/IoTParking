@@ -5,7 +5,12 @@ const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
 let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
+const os = require("os");
 let sqlHelper = new DbHelper();
+
+
+const formData = require("express-form-data");
+
 
 const cookieParser = require("cookie-parser");
 const { json } = require('body-parser');
@@ -14,8 +19,8 @@ const app = express()
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(express.static('WebServer/Views'))
+
 const port = 80
 
 app.get('/', (req, res) => {
@@ -94,8 +99,12 @@ function sendLoginPage(res){
   })
 }
 
-app.post("/uploads",(req,res)=>{
-  
+app.post('/uploads', function (req, res, next) {
+  console.log("Body");
+  console.log(req.body);
+
+
+  res.send("Hola!"+req.body);
 });
 
 app.post('/registerUser', async (req,res)=>{

@@ -2,12 +2,17 @@
 #include <WiFi.h>
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
+#include "img_converters.h"
 #include "esp_camera.h"
+#include "Base64.h"
+#include <HTTPClient.h>
 
-const char* ssid = "iPhone de Ronny";
-const char* password = "Lcpn3af7";
+#include <sstream> 
+using namespace std;
+const char* ssid = "juaniypia1B";
+const char* password = "1110scaffo";
 
-String serverName = "20.226.31.138";
+String serverName = "192.168.2.152";
 
 String serverPath = "/uploads";     // The default serverPath
 
@@ -69,7 +74,7 @@ void setup() {
 
   // init with high specs to pre-allocate larger buffers
   if(psramFound()){
-      config.jpeg_quality = 10;
+      config.jpeg_quality = 80;
       config.fb_count = 2;
       config.grab_mode = CAMERA_GRAB_LATEST;
     } else {
@@ -91,8 +96,8 @@ void setup() {
 
 
 String sendPhoto() {
+  HTTPClient http;
   String getAll;
-  String getBody;
 
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
@@ -103,67 +108,44 @@ String sendPhoto() {
   }
   
   Serial.println("Connecting to server: " + serverName);
-
-  if (client.connect(serverName.c_str(), serverPort)) {
+  http.begin("http://192.168.2.152/uploads");
+  
     Serial.println("Connection successful!");    
-    String head = "--RandomNerdTutorials\r\nContent-Disposition: form-data; name=\"imageFile\"; filename=\"esp32-cam.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
     String tail = "\r\n--RandomNerdTutorials--\r\n";
-
     uint32_t imageLen = fb->len;
-    uint32_t extraLen = head.length() + tail.length();
-    uint32_t totalLen = imageLen + extraLen;
-  
-    client.println("POST " + serverPath + " HTTP/1.1");
-    client.println("Host: " + serverName);
-    client.println("Content-Length: " + String(totalLen));
-    client.println("Content-Type: multipart/form-data; boundary=RandomNerdTutorials");
-    client.println();
-    client.print(head);
-  
+
     uint8_t *fbBuf = fb->buf;
     size_t fbLen = fb->len;
-    for (size_t n=0; n<fbLen; n=n+1024) {
-      if (n+1024 < fbLen) {
-        client.write(fbBuf, 1024);
-        fbBuf += 1024;
-      }
-      else if (fbLen%1024>0) {
-        size_t remainder = fbLen%1024;
-        client.write(fbBuf, remainder);
-      }
-    }   
-    client.print(tail);
-    
-    esp_camera_fb_return(fb);
-    
-    int timoutTimer = 10000;
-    long startTimer = millis();
-    boolean state = false;
-    
-    while ((startTimer + timoutTimer) > millis()) {
-      Serial.print(".");
-      delay(100);      
-      while (client.available()) {
-        char c = client.read();
-        if (c == '\n') {
-          if (getAll.length()==0) { state=true; }
-          getAll = "";
-        }
-        else if (c != '\r') { getAll += String(c); }
-        if (state==true) { getBody += String(c); }
-        startTimer = millis();
-      }
-      if (getBody.length()>0) { break; }
+    Serial.println("El largo es");
+    // unsigned char* pointer = (unsigned char*)fbBuf;
+    // std::stringstream ss;
+    // for(int i = 0; i < fbLen;i++)
+    // {
+      
+    //   ss << std::hex << (int)pointer[i];
+    // }
+    // std::string mystr = ss.str();
+    // const char *cstr = mystr.c_str();
+    char *input = (char *)fb->buf;
+    char output[base64_enc_len(3)];
+    String imageFile = "data:image/jpeg;base64,";
+    for (int i=0;i<fb->len;i++) {
+      base64_encode(output, (input++), 3);
+    if (i%3==0) imageFile += String(output);
     }
-    Serial.println();
-    client.stop();
-    Serial.println(getBody);
-  }
-  else {
-    getBody = "Connection to " + serverName +  " failed.";
-    Serial.println(getBody);
-  }
-  return getBody;
+
+    Serial.println(imageFile);
+    http.begin("http://192.168.2.152/uploads");
+    http.addHeader("Content-Type","application/octet-stream");
+    
+    int res = http.POST((char*)fbBuf);
+    Serial.println("Respuesta codigo");
+    Serial.println(res);
+    String body = http.getString();
+    esp_camera_fb_return(fb);
+    Serial.println(body);
+  
+  return body;
 }
 
 void loop() {
