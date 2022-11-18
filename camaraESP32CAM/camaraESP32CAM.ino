@@ -116,7 +116,6 @@ String sendPhoto() {
 
     uint8_t *fbBuf = fb->buf;
     size_t fbLen = fb->len;
-    Serial.println("El largo es");
     // unsigned char* pointer = (unsigned char*)fbBuf;
     // std::stringstream ss;
     // for(int i = 0; i < fbLen;i++)
@@ -138,9 +137,7 @@ String sendPhoto() {
     http.begin("http://192.168.2.152/uploads");
     http.addHeader("Content-Type","application/octet-stream");
     
-    int res = http.POST((char*)fbBuf);
-    Serial.println("Respuesta codigo");
-    Serial.println(res);
+    int res = http.POST("data="+imageFile);
     String body = http.getString();
     esp_camera_fb_return(fb);
     Serial.println(body);
