@@ -16,10 +16,10 @@ const cookieParser = require("cookie-parser");
 const { json } = require('body-parser');
 
 const app = express()
-//app.use(cookieParser());
-//app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(bodyParser.json());
-app.use(bodyParser.text({type:"*/*",limit:"100kb"}));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.text({type:"*/*",limit:"30000kb"}));
 
 
 app.use(express.urlencoded({extended: true}));
@@ -103,18 +103,25 @@ function sendLoginPage(res){
   })
 }
 
-app.post("/uploads",async (req,res)=>{
+app.get("/uploads",async (req,res)=>{
   //console.log(req);
-  var request = req.body;
-  console.log(request);
-  database64 = request;
-  console.log("Data es "+database64) ;
-  let buffer = Buffer.from(database64,'base64');
-  fs.createWriteStream("./a.jpg").write(buffer);
-  var data = await fs.promises.readFile("./a.jpg");
+  var request = req.query;
+  //console.log(request);
+  database64 = request.data;
+  //res.send(request);
+  let replaced = database64.replaceAll(' ','+');
+  console.log(replaced) ;
+  let buffer = Buffer.from(replaced,'base64');
+  console.log(buffer);
+
+  fs.writeFileSync('image.jpg', replaced, {encoding: 'base64'},(err)=>{
+    console.log("File created");
+  });
+
+  var data = await fs.promises.readFile("./a.png");
 
   let textData = await tessereact.recognize(data);
-    console.log(` ${str} - ${textData.data.text}`);
+    console.log(`${textData.data.text}`);
     res.send(textData.data.text);
     
 
