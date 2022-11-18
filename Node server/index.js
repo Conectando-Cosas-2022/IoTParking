@@ -99,12 +99,17 @@ function sendLoginPage(res){
   })
 }
 
-app.post('/uploads', function (req, res, next) {
-  console.log("Body");
-  console.log(req.body);
+app.post("/uploads",async (req,res)=>{
+  let database64 = req.body.data; 
+  let buffer = Buffer.from(database64,'base64');
+  fs.createWriteStream("./a.jpg").write(buffer);
+  var data = await fs.promises.readFile("./a.jpg");
 
+  let textData = await tessereact.recognize(data);
+    console.log(` ${str} - ${textData.data.text}`);
+    res.send(textData.data.text);
+    
 
-  res.send("Hola!"+req.body);
 });
 
 app.post('/registerUser', async (req,res)=>{
