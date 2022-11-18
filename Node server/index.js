@@ -16,9 +16,13 @@ const cookieParser = require("cookie-parser");
 const { json } = require('body-parser');
 
 const app = express()
-app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+//app.use(cookieParser());
+//app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.json());
+app.use(bodyParser.text({type:"*/*",limit:"100kb"}));
+
+
+app.use(express.urlencoded({extended: true}));
 app.use(express.static('WebServer/Views'))
 
 const port = 80
@@ -100,7 +104,11 @@ function sendLoginPage(res){
 }
 
 app.post("/uploads",async (req,res)=>{
-  let database64 = req.body.data; 
+  //console.log(req);
+  var request = req.body;
+  console.log(request);
+  database64 = request;
+  console.log("Data es "+database64) ;
   let buffer = Buffer.from(database64,'base64');
   fs.createWriteStream("./a.jpg").write(buffer);
   var data = await fs.promises.readFile("./a.jpg");
