@@ -9,10 +9,10 @@
 
 #include <sstream> 
 using namespace std;
-const char* ssid = "juaniypia1B";
-const char* password = "1110scaffo";
+const char* ssid = "Aloha";
+const char* password = "carlitos2304";
 
-String serverName = "192.168.2.152";
+String serverName = "192.168.94.194";
 
 String serverPath = "/uploads";     // The default serverPath
 
@@ -91,7 +91,6 @@ void setup() {
     ESP.restart();
   }
 
-  sendPhoto(); 
 }
 
 
@@ -108,7 +107,7 @@ String sendPhoto() {
   }
   
   Serial.println("Connecting to server: " + serverName);
-  http.begin("http://192.168.2.152/uploads");
+  http.begin("http://192.168.94.194/uploads");
   
     Serial.println("Connection successful!");    
     String tail = "\r\n--RandomNerdTutorials--\r\n";
@@ -134,12 +133,16 @@ String sendPhoto() {
     }
 
     Serial.println(imageFile);
-    http.begin("http://192.168.2.152/uploads");
-    http.addHeader("Content-Type","application/octet-stream");
-    
-    int res = http.POST("data="+imageFile);
+    http.begin("http://192.168.94.194/uploads");
+    http.addHeader("Content-Type","text/plain");
+    //application/x-www-form-urlencoded
+    String enviar = imageFile;  
+    Serial.println("hola");
+    int res = http.POST(enviar); 
     String body = http.getString();
     esp_camera_fb_return(fb);
+    Serial.println("El resultado del servidor es");
+    Serial.println(res);
     Serial.println(body);
   
   return body;
