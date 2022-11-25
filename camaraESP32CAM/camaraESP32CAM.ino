@@ -9,10 +9,10 @@
 
 #include <sstream> 
 using namespace std;
-const char* ssid = "juaniypia1B";
-const char* password = "1110scaffo";
+const char* ssid = "iPhone de Ronny";
+const char* password = "Lcpn3af7";
 
-String serverName = "192.168.2.152";
+String serverName = "172.20.10.2";
 
 String serverPath = "/uploads";     // The default serverPath
 
@@ -20,7 +20,7 @@ const int serverPort = 80;
 
 WiFiClient client;
 
-const int timerInterval = 30000;    // time between each HTTP POST image
+const int timerInterval = 5000;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 #define CAMERA_MODEL_AI_THINKER
 
@@ -120,20 +120,25 @@ String sendPhoto() {
     // const char *cstr = mystr.c_str();
     char *input = (char *)fb->buf;
     char output[base64_enc_len(3)];
-    String imageFile = "data:image/jpeg;base64,";
+    String imageFile = "";
     for (int i=0;i<fb->len;i++) {
       base64_encode(output, (input++), 3);
     if (i%3==0) imageFile += String(output);
     }
 
     Serial.println(imageFile);
-    Serial.println("Request a:");
-    Serial.println("http://"+serverName+"/uploads?data="+imageFile);
-    http.begin("http://"+serverName+"/uploads?data="+imageFile);
-    //http.addHeader("Content-Type","text/plain");
+    Serial.println("Request 1 a: http://"+serverName);
+    //Serial.println("http://"+serverName+"/uploads?data="+imageFile);
+    
+    //http.addHeader("Content-Type","application/x-www-form-urlencoded");
     //application/x-www-form-urlencoded
-    String enviar = imageFile;  
-    int res = http.GET(); 
+    String envio1 = imageFile.substring(0,imageFile.length()-150); 
+    http.begin("http://"+serverName+"/uploads1?data="+envio1); 
+    int res = http.GET();
+        Serial.println("Request 2 a: http://"+serverName);
+    String envio2 = imageFile.substring(imageFile.length()-150,imageFile.length()-1);
+    http.begin("http://"+serverName+"/uploads2?data="+envio2); 
+    res = http.GET();
     String body = http.getString();
     esp_camera_fb_return(fb);
     Serial.println("El resultado del servidor es");

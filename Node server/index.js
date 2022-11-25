@@ -7,13 +7,14 @@ const bodyParser = require("body-parser");
 let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
 const os = require("os");
 let sqlHelper = new DbHelper();
-
+let imagenTotal = "";
 
 const formData = require("express-form-data");
 
 
 const cookieParser = require("cookie-parser");
 const { json } = require('body-parser');
+const { send } = require('process');
 
 const app = express()
 app.use(cookieParser());
@@ -103,29 +104,62 @@ function sendLoginPage(res){
   })
 }
 
-app.get("/uploads",async (req,res)=>{
+app.get("/uploads1",async (req,res)=>{
   //console.log(req);
-  var request = req.query;
   //console.log(request);
-  database64 = request.data;
+  let database64 = req.query.data;
   //res.send(request);
+  console.log("Data 1 es:");
+  //console.log(req.data);
   let replaced = database64.replaceAll(' ','+');
   console.log(replaced) ;
-  let buffer = Buffer.from(replaced,'base64');
+  imagenTotal += replaced;
+  res.send("a");
+  return;
+  var data = fs.readFile("./a.png",(err,data)=>{
+    let textData = tessereact.recognize(data).then((textData)=>{
+      console.log(`${textData.data.text}`);
+    res.send(textData.data.text);
+    }).catch((err)=>{
+      throw err;
+    });
+    
+  });
+
+  
+    
+
+});
+
+  app.get("/uploads2",async (req,res)=>{
+    //console.log(req);
+  let data2 = req.query.data;
+  //res.send(request);
+  console.log("Total es:");
+  let replaced = data2.replaceAll(' ','+');
+  //console.log(data2) ;
+  imagenTotal += replaced;
+  console.log(imagenTotal);
+  let buffer = Buffer.from(imagenTotal,'base64');
   console.log(buffer);
 
   fs.writeFileSync('image.jpg', replaced, {encoding: 'base64'},(err)=>{
     console.log("File created");
   });
-
-  var data = await fs.promises.readFile("./a.png");
-
-  let textData = await tessereact.recognize(data);
-    console.log(`${textData.data.text}`);
+  imagenTotal = "";
+  res.send("a");
+  return;
+  var data = fs.readFile("./a.png",(err,data)=>{
+    let textData = tessereact.recognize(data).then((textData)=>{
+      console.log(`${textData.data.text}`);
     res.send(textData.data.text);
+    }).catch((err)=>{
+      throw err;
+    });
     
+  });
 
-});
+  })
 
 app.post('/registerUser', async (req,res)=>{
   /*
