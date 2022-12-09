@@ -1,0 +1,58 @@
+#titulo{
+    width: fit-content;
+    margin: 0 auto;
+    background-color:rgb(128, 122, 120) ;
+    border-radius: 5px;
+}
+
+#divIndicarFecha{
+    background-color:rgb(128, 122, 120);
+    border-radius: 5px;
+}
+
+#divLblReserva{
+    display: grid;
+    height: 500px;
+    width: 100%;
+    grid-template-areas: "head head"
+                         "btn1 btn2"
+                         "btn3 btn4";
+    grid-template-columns: repeat(2, 50%);
+    grid-template-rows: 8% repeat(2, 45%);
+    background-color:rgb(128, 122, 120) ;
+    justify-items: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#tituloLugares { grid-area: head; height: 50%;}
+#idBtnReserva1 { grid-area: btn1;}
+#idBtnReserva2 { grid-area: btn2;}
+#idBtnReserva3 { grid-area: btn3;}
+#idBtnReserva4 { grid-area: btn4;}
+
+.botones{
+    background-color:rgb(155, 155, 155) ;
+    height: 85%;
+    width: 85%;
+    font-size: x-large;
+    border-radius: 15px;
+}
+
+#idBtnAceptar{
+    background-color:rgb(128, 122, 120) ;
+    border-radius: 5px;
+    height: 30px;
+    width: 50%;
+}
+
+#divBtnAceptar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+}
+
+#body{
+    background-color: rgb(75, 73, 73);
+}
