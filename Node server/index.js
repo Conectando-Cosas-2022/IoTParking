@@ -42,8 +42,8 @@ app.get('/', (req, res) => {
     
 
     console.log(` ${str} - Nueva request`);
-    /*
-    var file = fs.readFile("./a.png",(err,data)=>{
+    
+    var file = fs.readFile("../a.jpg",(err,data)=>{
         tessereact.recognize(data).then((textData)=>{
         console.log(` ${str} - ${textData.data.text}`);
 
@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
 
 
     })
-    */
+    
 
     res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
 

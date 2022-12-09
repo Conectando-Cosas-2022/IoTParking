@@ -6,11 +6,18 @@
 #include "esp_camera.h"
 #include "Base64.h"
 #include <HTTPClient.h>
-
+#include "ESP32_FTPClient.h"
 #include <sstream> 
 using namespace std;
-const char* ssid = "iPhone de Ronny";
-const char* password = "Lcpn3af7";
+const char* ssid = "juaniypia1";
+const char* password = "1110scaffo";
+
+char ftp_server[] = "192.168.2.192";
+char ftp_user[] = "iotparking";
+char ftp_pass[] = "iotparkingftp";
+char ftp_path[] = "/foto/";
+
+ESP32_FTPClient ftp(ftp_server,ftp_user,ftp_pass, 5000, 2);
 
 String serverName = "172.20.10.2";
 
@@ -20,7 +27,7 @@ const int serverPort = 80;
 
 WiFiClient client;
 
-const int timerInterval = 5000;    // time between each HTTP POST image
+const int timerInterval = 20000;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 #define CAMERA_MODEL_AI_THINKER
 
@@ -30,7 +37,7 @@ unsigned long previousMillis = 0;   // last time image was sent
 
 void setup() {
   Serial.begin(115200);
-
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
   WiFi.mode(WIFI_STA);
   Serial.println();
   Serial.print("Connecting to ");
@@ -64,18 +71,18 @@ void setup() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
+  config.frame_size = FRAMESIZE_QHD;
   config.pixel_format = PIXFORMAT_JPEG; // for streaming
   //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
   config.fb_count = 1;
-
+  ftp.OpenConnection();
   // init with high specs to pre-allocate larger buffers
   if(psramFound()){
-      config.jpeg_quality = 80;
-      config.fb_count = 2;
+      config.jpeg_quality = 5;
+      config.fb_count = 3;
       config.grab_mode = CAMERA_GRAB_LATEST;
     } else {
       // Limit the frame size when PSRAM is not available
@@ -91,10 +98,13 @@ void setup() {
     ESP.restart();
   }
 
+  sensor_t * s = esp_camera_sensor_get();
+  s->set_brightness(s, 2);
+
 }
 
 
-String sendPhoto() {
+void sendPhoto() {
   HTTPClient http;
   String getAll;
 
@@ -109,43 +119,22 @@ String sendPhoto() {
 
     uint8_t *fbBuf = fb->buf;
     size_t fbLen = fb->len;
-    // unsigned char* pointer = (unsigned char*)fbBuf;
-    // std::stringstream ss;
-    // for(int i = 0; i < fbLen;i++)
-    // {
-      
-    //   ss << std::hex << (int)pointer[i];
-    // }
-    // std::string mystr = ss.str();
-    // const char *cstr = mystr.c_str();
-    char *input = (char *)fb->buf;
-    char output[base64_enc_len(3)];
-    String imageFile = "";
-    for (int i=0;i<fb->len;i++) {
-      base64_encode(output, (input++), 3);
-    if (i%3==0) imageFile += String(output);
-    }
 
-    Serial.println(imageFile);
-    Serial.println("Request 1 a: http://"+serverName);
-    //Serial.println("http://"+serverName+"/uploads?data="+imageFile);
-    
-    //http.addHeader("Content-Type","application/x-www-form-urlencoded");
-    //application/x-www-form-urlencoded
-    String envio1 = imageFile.substring(0,imageFile.length()-150); 
-    http.begin("http://"+serverName+"/uploads1?data="+envio1); 
-    int res = http.GET();
-        Serial.println("Request 2 a: http://"+serverName);
-    String envio2 = imageFile.substring(imageFile.length()-150,imageFile.length()-1);
-    http.begin("http://"+serverName+"/uploads2?data="+envio2); 
-    res = http.GET();
-    String body = http.getString();
+    ftp.ChangeWorkDir(ftp_path);
+    ftp.InitFile("Type I");
+    String fileName = "a.jpg";
+    int str_len = fileName.length() + 1; 
+    char char_array[str_len];
+    fileName.toCharArray(char_array, str_len);
+
+     ftp.NewFile(char_array);
+    ftp.WriteData( fb->buf, fb->len );
+    ftp.CloseFile();
+
+  
     esp_camera_fb_return(fb);
     Serial.println("El resultado del servidor es");
-    Serial.println(res);
-    Serial.println(body);
-  
-  return body;
+
 }
 
 void loop() {
