@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/notificationPage.css">
+    <script src="./JS/notification.js"></script>
+    <title>Notificaciones IoTParking</title>
+</head>
+
+<body id="body">
+    <h1 id="titulo" style="color: white">Notificaciones</h1>
+    <br>
+    <div id="divLevantarBarrera">
+        <h2 id="tituloLevantar" style="color: white">Indique si desea subir o bajar la barrera</h2>
+        <input type="button" id="idBtnSubir" onclick="registerPlateClick()" value="Subir barrera" class="botones">
+        <input type="button" id="idBtnBajar" onclick="registerPlateClick()" value="Bajar barrera" class="botones">
+    </div>
+    <h2 id="idMatriculas" style="color: white">Matrículas</h2>
+    <div id="divMatriculas">
+        <p id="idNumMatricula" style="color: white">Matrícula: número de matrícula</p>
+        <p id="idHoraReserva" style="color: white">Hora reservada: hora de reserva</p>
+    </div>
+    <br>
+    <div id="divBtnVolver">
+        <input type="button" id="idVolverPaginaPrincipal" style="color: white" value="Volver a página principal">
+    </div>
+</body>
+
+</html>

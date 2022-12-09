@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/reservationPage.css">
+    <script src="./JS/RegisterPlate.js"></script>
+    <title>Reserva lugar IoTParking</title>
+</head>
+
+<body id="body">
+    <h1 id="titulo" style="color: white">Reserva de lugar</h1>
+    <br>
+    <div id="divIndicarFecha">
+        <h2 id="indicarDatos" style="color: white">Indique los datos de la reserva</h2>
+        <label for="idFecha" class="labels" style="color: white">Seleccione la fecha a reservar:</label>
+        <input type="date" id="idFecha" min="2022-12-08">
+        <label for="idHora" class="labels" style="color: white">Seleccione la hora:</label>
+        <input type="time" id="idHora">
+        <br><br>
+    </div>
+    <br>
+    <div id="divLblReserva">
+        <h2 id="tituloLugares" style="color: white">Seleccione su lugar</h2>
+        <br>
+        <input type="button" id="idBtnReserva1" onclick="registerPlateClick()" value="1" class="botones">
+        <input type="button" id="idBtnReserva2" onclick="registerPlateClick()" value="2" class="botones">
+        <input type="button" id="idBtnReserva3" onclick="registerPlateClick()" value="3" class="botones">
+        <input type="button" id="idBtnReserva4" onclick="registerPlateClick()" value="4" class="botones">
+    </div>
+    <br>
+    <div id="divBtnAceptar">
+        <input type="button" id="idBtnAceptar" style="color: white" value="Aceptar">
+    </div>
+</body>
+
+</html>
