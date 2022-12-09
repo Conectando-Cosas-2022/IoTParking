@@ -5,8 +5,7 @@
 #titulo {
     width: fit-content;
     margin: 0 auto;
-    background-color: rgb(128, 122, 120);
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 #divUnionRegistroCambioPlate {
@@ -20,18 +19,28 @@
     background-color: rgb(128, 122, 120);
 }
 
+#idMenu{
+    display: grid;
+    grid-template-columns: repeat(3, 33.3%);
+    grid-template-rows: 100%;
+    background-color:rgb(128, 122, 120) ;
+    justify-items: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
 #idDivLblRegistroCambioPlate {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 25px;
+    border-radius: 5px;
 }
 
 #idDivBtnRegistroCambioPlate {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 25px;
+    border-radius: 5px;
 }
 
 #idDivLugarAsignado {
@@ -39,27 +48,9 @@
     background-color: rgb(128, 122, 120);
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
-}
-
-#idNotificaciones {
-    text-align: left;
-}
-
-#idReservaIcono {
-    /*text-align: center;*/
-    /*vertical-align: middle;*/
-    justify-content: center;
-    margin: auto;
+    border-radius: 5px;
 }
 
 .botones {
     border-radius: 25px;
-}
-
-#seccionMain {
-    background-color: rgb(238, 97, 54);
-    border-radius: 10px;
-    padding-left: 25%;
-    padding-right: 25%;
 }

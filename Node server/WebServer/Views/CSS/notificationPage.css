@@ -1,0 +1,77 @@
+#titulo {
+    width: fit-content;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+#divLevantarBarrera {
+    display: grid;
+    height: 250px;
+    width: 100%;
+    grid-template-areas: "head head"
+        "btnSubir btnBajar";
+    grid-template-columns: repeat(2, 50%);
+    grid-template-rows: 15% 85%;
+    background-color: rgb(128, 122, 120);
+    justify-items: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#tituloLevantar {
+    grid-area: head;
+}
+
+#idBtnSubir {
+    grid-area: btnSubir;
+}
+
+#idBtnBajar{
+    grid-area: btnBajar;
+}
+
+#divMatriculas {
+    display: grid;
+    width: 100%;
+    grid-template-areas: "numMatricula hora";
+    grid-template-columns: repeat(2, 50%);
+    grid-template-rows: 100%;
+    background-color: rgb(128, 122, 120);
+    justify-items: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+#idNumMatricula{
+    grid-area: numMatricula;
+}
+
+#idHoraReserva{
+    grid-area: hora;
+}
+
+.botones {
+    background-color: rgb(155, 155, 155);
+    height: 85%;
+    width: 85%;
+    font-size: x-large;
+    border-radius: 15px;
+}
+
+#idVolverPaginaPrincipal {
+    background-color: rgb(128, 122, 120);
+    border-radius: 5px;
+    height: 30px;
+    width: 50%;
+}
+
+#divBtnVolver {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 25px;
+}
+
+#body {
+    background-color: rgb(75, 73, 73);
+}
