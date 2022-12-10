@@ -7,15 +7,15 @@ class DbHelper{
         this.sql = require("mssql");
 
         let config = {
-            user: "AdminUser",
-            password: "admin",
+            user: "AdminIot",
+            password: "iotparking",
             server: "localhost",
             database: "Iotparking",
             port:1433,
 	   options:{
 		trustServerCertificate: true
 	    }
-        };
+    };
 
         this.sql.connect(config,(err)=>{
             console.log(err);
@@ -26,6 +26,50 @@ class DbHelper{
         let dateClone = new Date(startdate.getTime());
         dateClone.setMinutes(dateClone.getMinutes() + duration);
         return dateClone;
+    }
+
+    async nextResLessThanOneHour(spot){
+        /*Agarra todas las reservas que tiene ese spot
+          para cada una se fija si el tiempo de reserva menos el momento actual es positivo
+            se fija si la diferencia es menos que una hora
+            si si retorna true
+          Sino encuentra ninguno
+            retorna false
+
+
+        */  let nowDate = new Date();
+            let reservations = await this.sql.query`select * from Reservas where Lugar = ${spot}`;
+            for(let i = 0; i < reservations.recordset.length;i++){
+                let resDate = reservations[i].Fecha_Reserva;
+
+                if(nowdate - resDate > 0){
+                    let minDif = (nowDate - resDate)/60000;
+
+                    if(minDif <= 60){
+                        return true;
+                    }
+
+                }
+            }
+
+            return false;
+    }
+
+    async activeReservationExists(spot){
+        let nowDate = new Date();
+        let reservations = await this.sql.query`select * from Reservas where Lugar = ${spot}`;
+        for(let i = 0; i < reservations.recordset.length;i++){
+            let startDate = reservations[i].Fecha_Reserva;
+            let duration = reservations[i].Duracion;
+
+            let endDate = this.getEndDate(startDate,duration);
+
+            if(startDate - nowDate > 0 && nowDate - endDate > 0){
+                return true;
+            }
+            
+        }
+        return false;
     }
       
     async tieneReservaMatricula(matricula){
