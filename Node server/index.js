@@ -16,7 +16,7 @@ const cookieParser = require("cookie-parser");
 const { json } = require('body-parser');
 const { send } = require('process');
 
-const app = express()
+const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -24,9 +24,9 @@ app.use(bodyParser.text({type:"*/*",limit:"30000kb"}));
 
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.static('WebServer/Views'))
+app.use(express.static('WebServer/Views'));
 
-const port = 80
+let port = 80;
 
 app.get('/', (req, res) => {
     let ts = Date.now();
@@ -43,20 +43,12 @@ app.get('/', (req, res) => {
 
     console.log(` ${str} - Nueva request`);
     
-    var file = fs.readFile("../a.jpg",(err,data)=>{
-
-        tessereact.recognize(data).then((textData)=>{
-          //var clean = cleanData(textData.text);
-        console.log(` ${str} - ${textData.data.text}`);
-        
-    });
-
-    });
+    
     
 
     res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
 
-})
+});
 
 function cleanData(data){
   let splitData = data.split(" ");
@@ -87,7 +79,7 @@ app.get('/Register', (req, res) => {
 
   res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPage.html'));
 
-})
+});
 
 app.get('/main',(req,res)=>{
     res.sendFile(path.join(__dirname,'WebServer/Views/MainPage.html'));
@@ -119,10 +111,19 @@ function sendLoginPage(res){
 
 app.get("/photoUploaded",async (req,res)=>{
   
-
-  
+  console.log(` ${str} - Nueva request`);
     
+    var file = fs.readFile("../a.jpg",(err,data)=>{
 
+        tessereact.recognize(data).then((textData)=>{
+          //var clean = cleanData(textData.text);
+        console.log(` ${str} - ${textData.data.text}`);
+        
+    });
+  
+  });
+    res.send("test");
+  
 });
 
   
@@ -253,13 +254,10 @@ app.post("/saveReservation",async (req,res)=>{
    */
     let userID = req.cookies.UserID;
     if(userID != null){
-      var day = req.params.day;
-      var month = req.params.month;
-      var year = req.params.year;
-      var time = req.params.time;
+      
 
       let plate = req.params.plateNumber;
-
+      let date = new Date(req.params.date);
       var oldres = sqlHelper.getReservationList(plate);
 
 
@@ -267,8 +265,6 @@ app.post("/saveReservation",async (req,res)=>{
       if(!reservationExists(plate,parsedDate,duration)){
         
         sqlHelper.addReservation(plate,parsedDate);
-          
-
       }else{
 
         res.send({
@@ -288,7 +284,7 @@ app.post("/saveReservation",async (req,res)=>{
 });
 
 function getEndDate(startdate,duration){
-  let dateClone = new Date(startDate.getTime());
+  let dateClone = new Date(startdate.getTime());
   dateClone.setMinutes(dateClone.getMinutes() + duration);
   return dateClone;
 }
@@ -301,12 +297,12 @@ function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
 }
 
 function reservationExists(startdate,duration,reservationsRecordset){
-  let newendDate = getEndDate(startdate,duration);
+  let newenddate = getEndDate(startdate,duration);
 
   for(let reservation in reservationsRecordset){
     let oldstartdate = reservation.Fecha_Reserva;
     let oldenddate = getEndDate(reservation.Fecha_Reserva,reservation.Duracion);
-    if(dateRangeOverlaps(startdate,newendate,oldstartdate,oldenddate)){
+    if(dateRangeOverlaps(startdate,newenddate,oldstartdate,oldenddate)){
       return true;
     }
   }
@@ -333,8 +329,6 @@ app.get("/registeredReservations",(req,res)=>{
   */
 });
 
-
-
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Example app listening on port ${port}`);
 });

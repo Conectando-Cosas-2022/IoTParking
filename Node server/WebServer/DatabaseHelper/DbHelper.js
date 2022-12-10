@@ -94,9 +94,9 @@ class DbHelper{
         }
     }
 
-    async addReservation(){
+    async addReservation(plateNumber,reservationDate,duration){
         try{
-            await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas where Matriculas.Matricula = ${plateNumber}`;
+                await this.sql.query`INSERT INTO [dbo].[Reservas] (ID_Matricula,Fecha_Reserva,Duracion) values (${plateNumber},${reservationDate},${duration})`;
             }catch(ex){
                 console.log(ex);
                 throw ex;
