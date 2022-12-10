@@ -22,6 +22,21 @@ class DbHelper{
         });
     }
 
+    getEndDate(startdate,duration){
+        let dateClone = new Date(startdate.getTime());
+        dateClone.setMinutes(dateClone.getMinutes() + duration);
+        return dateClone;
+    }
+      
+    async tieneReservaMatricula(matricula){
+        let reservas = await this.sql.query`select * from Reservas inner join Matriculas on Matriculas.ID_Matricula = Reservas.ID_Matricula where Matricula = ${matricula}`;
+        let fechaActual = new Date();
+        for(let unaReserva of reservas.recordset){
+            let diferencia = unaReserva.Fecha_Reserva - fechaActual;
+            console.log(diferencia);
+        }
+    }
+
     async userExists(username){
         let users = await this.sql.query`select * from Usuarios where Nombre = ${username}`;
         if(users.recordset.length > 0){

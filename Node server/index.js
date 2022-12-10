@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
 
     console.log(` ${str} - Nueva request`);
     
-    
+    sqlHelper.tieneReservaMatricula("ABC1234");
     
 
     res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
@@ -328,6 +328,22 @@ app.get("/registeredReservations",(req,res)=>{
       las mando
   */
 });
+
+function obtenerLugarDisponible(matricula){
+/*
+  llamamos funcion que verifica si la matricula ya tiene una reserva
+  si tiene
+    lo guardo en lista de clientes que estan dentro del estacionamiento
+    devuelvo el numero de lugar de la reserva
+  no tiene
+    recorre la lista de lugares y se fija cual esta disponible y además tiene una 
+    diferencia de por lo menos una hora con la siguiente reserva en dicho lugar
+    encuentra un lugar
+    guarda matricula en la lista de clientes dentro estacionamiento
+    devuelvo lugar
+  |
+*/
+}
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
