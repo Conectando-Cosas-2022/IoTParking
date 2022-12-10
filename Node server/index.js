@@ -9,12 +9,13 @@ const os = require("os");
 let sqlHelper = new DbHelper();
 let availableSpots = [true, true, true, true];
 let activePlates = [];
+let notificationsPopupPollingData = []; 
 
 const formData = require("express-form-data");
 
 
 const cookieParser = require("cookie-parser");
-const { json } = require('body-parser');
+const { json, text } = require('body-parser');
 const { send } = require('process');
 
 const app = express();
@@ -112,6 +113,12 @@ function sendLoginPage(res) {
   })
 }
 
+//DEBUG//
+app.post("/getActivePlates",(req,res)=>{
+  res.send(availableSpots);
+})
+
+
 app.get("/photoUploaded", async (req, res) => {
 
 
@@ -120,6 +127,7 @@ app.get("/photoUploaded", async (req, res) => {
     var file = fs.readFileSync("a.jpg");
     let textData = await tessereact.recognize(file);
     let plate = cleanData(textData.data.text);
+    plate = "Arial";
     console.log(plate);
     if (sqlHelper.plateExists(plate)) {
       let spot = await obtenerLugarDisponible(plate);
@@ -248,6 +256,66 @@ app.post("/savePlate", async (req, res) => {
 
 });
 
+app.post("/getActivePlate",async (req,res)=>{
+  /*Agarrlo la lista de los active, para cada uno me fijo el id de usuario,
+  si es igual al del request cookie entonces le retorno esa matricula*/
+  let userid = req.cookies.UserID;
+  if(userid != null){
+
+    for(let activeSpot of availableSpots){
+      let plateuserId = await sqlHelper.getUserIdFromPlate(activeSpot.matric);
+        if(plateuserId == userid){
+          res.send({
+            error:false,
+            matricula:activeSpot.matric,
+            lugar:activeSpot.lugar
+          });
+
+        }
+    }
+
+    res.send({
+      error:true,
+      msg:"El usuario no tiene matriculas activas",
+      redirect:"/"
+    });
+
+
+  }else{
+    res.send({
+      error:true,
+      mesg:"consulta de matricula activa sin logeo",
+      redirect:"/"
+    })
+  }
+});
+
+app.post("/subirBarrera",(req,res)=>{
+  let spot = req.body.spot;
+  let upAction = true;
+
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction});
+  res.send("success");
+});
+
+app.post("/bajarBarrera",(req,res)=>{
+  let spot = req.body.spot;
+  let upAction = false;
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction});
+  res.send("success");
+});
+
+app.post("/esp8266pollingdata",(req,res)=>{
+  res.send(notificationsPopupPollingData);
+});
+
+app.post("/actionComplete",(req,res)=>{
+  let spotdata = req.body.spot;
+  notificationsPopupPollingData = notificationsPopupPollingData
+  .filter(polldata => polldata.lugar != spotdata);
+  res.send("success");
+});
+
 app.post("/saveReservation", async (req, res) => {
   /**
    * 
@@ -368,11 +436,19 @@ async function obtenerLugarDisponible(matricula) {
 
   let resData = await sqlHelper.tieneReservaMatricula(matricula)
   if (resData.hasReservation) {
-    activePlates.push(matricula);
-    return resData.spot;
+    if(resData.spot != -1){
+      activePlates.push({matric: matricula, lugar: spot});
+
+      return resData.spot;
+    }
+
   } else {
-    activePlates.push(matricula);
-    return await getAvailableSpot();
+
+    let avspot = await getAvailableSpot();
+    if(avspot != -1){
+      activePlates.push({matric: matricula, lugar: avspot});
+      return avspot;
+    }
 
   }
 

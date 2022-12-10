@@ -128,7 +128,7 @@ class DbHelper{
 
     }
 
-    async getUser(username,password){
+    async getUser(username){
         let user = await this.sql.query`select * from Usuarios where Nombre = ${username}`;
         if(user.recordset.length > 0){
             return new Usuario(
@@ -138,6 +138,11 @@ class DbHelper{
         }else{
             return null;
         }
+    }
+
+    async getUserIdFromPlate(plate){
+        let userset = await this.sql.query`select ID_Usuario from Matricula where Matricula = ${plate}`;
+        return userset.recordset[0].ID_Usuario;
     }
 
     async plateExists(plateNumber){
