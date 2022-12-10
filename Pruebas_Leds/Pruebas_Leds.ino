@@ -18,11 +18,17 @@ uint32_t negro = tira1.Color(0, 0, 0);
 int largo3 = 41;
 int* lugar3 = new int[largo3];
 
+int largo4 = 50;
+int* lugar4 = new int[largo4];
+
 void setup() {
   // inicializamos tira1
   tira1.begin();
   for (int i = 0; i < largo3; i++) {
     lugar3[i] = i;
+  }
+  for (int i = 0; i < largo4; i++) {
+    lugar4[i] = i;
   }
 }
 
@@ -40,6 +46,6 @@ void prender(int* lugar, int largo, int numTira, uint32_t color) {
 void loop() {
   prender(lugar3, largo3, 1, rojo);
   delay(3000);
-  //prenderDesdeHasta(5, 15, otroColor);
+  prender(lugar4, largo4, 1, verde);
   delay(3000);
 }
