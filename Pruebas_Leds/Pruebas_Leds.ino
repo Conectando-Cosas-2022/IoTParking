@@ -1,5 +1,6 @@
 //Pin de datos
 #define PIN 2
+#define pin2 4
 //Cantidad de pixeles de la led
 #define cantPixeles 60
 #include "Adafruit_NeoPixel.h"
@@ -10,20 +11,35 @@
 //pixels.setPixelColor(n, color);
 
 Adafruit_NeoPixel tira1 = Adafruit_NeoPixel(cantPixeles, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel tira2 = Adafruit_NeoPixel(cantPixeles, pin2, NEO_GRB + NEO_KHZ800);
+
 uint32_t rojo = tira1.Color(255, 0, 0);
 uint32_t verde = tira1.Color(0, 255, 0);
 uint32_t otroColor = tira1.Color(75, 12, 110);
-uint32_t negro = tira1.Color(0, 0, 0);
+//uint32_t negro = tira1.Color(0, 0, 0);
+
+int largo1 = 6;
+int* lugar1 = new int[largo1];
+
+int largo2 = 12;
+int* lugar2 = new int[largo2];
 
 int largo3 = 41;
 int* lugar3 = new int[largo3];
 
-int largo4 = 50;
+int largo4 = 48;
 int* lugar4 = new int[largo4];
 
 void setup() {
   // inicializamos tira1
   tira1.begin();
+  tira2.begin();
+  for (int i = 0; i < largo1; i++) {
+    lugar1[i] = i;
+  }
+  for (int i = 0; i < largo2; i++) {
+    lugar2[i] = i;
+  }
   for (int i = 0; i < largo3; i++) {
     lugar3[i] = i;
   }
@@ -34,18 +50,24 @@ void setup() {
 
 void prender(int* lugar, int largo, int numTira, uint32_t color) {
   if (numTira == 1) {
+    tira1.clear();
     for (int i = 0; i < largo; i++) {
       tira1.setPixelColor(lugar[i], color);
     }
     tira1.show();
   } else {
-    //con tira2
+    tira2.clear();
+    for (int i = 0; i < largo; i++) {
+      tira2.setPixelColor(lugar[i], color);
+    }
+    tira2.show();
   }
 }
 
 void loop() {
-  prender(lugar3, largo3, 1, rojo);
+  int numTira = 1;
+  prender(lugar3, largo3, numTira, rojo);
   delay(3000);
-  prender(lugar4, largo4, 1, verde);
+  prender(lugar4, largo4, numTira, verde);
   delay(3000);
 }
