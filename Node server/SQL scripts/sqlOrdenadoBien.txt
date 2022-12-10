@@ -25,3 +25,5 @@ CREATE TABLE Reservas
 	Duracion int not null,
 	FOREIGN KEY (ID_Matricula) References Matriculas(ID_Matricula)
 );
+
+alter table Reservas add Lugar int
