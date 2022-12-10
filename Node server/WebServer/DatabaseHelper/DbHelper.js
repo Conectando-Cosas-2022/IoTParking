@@ -84,6 +84,27 @@ class DbHelper{
 
     }
 
+    async getReservationList(plateNumber){
+        try{
+        let date = await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas where Matriculas.Matricula = ${plateNumber}`;
+            return date.recordset;
+        }catch(ex){
+            console.log(ex);
+            throw ex;
+        }
+    }
+
+    async addReservation(){
+        try{
+            await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas where Matriculas.Matricula = ${plateNumber}`;
+            }catch(ex){
+                console.log(ex);
+                throw ex;
+            }
+    }
+
+   
+
 
 }
 

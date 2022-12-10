@@ -9,8 +9,8 @@
 #include "ESP32_FTPClient.h"
 #include <sstream> 
 using namespace std;
-const char* ssid = "juaniypia1";
-const char* password = "1110scaffo";
+const char* ssid = "Aloha";
+const char* password = "carlitos2304";
 
 char ftp_server[] = "192.168.2.192";
 char ftp_user[] = "iotparking";

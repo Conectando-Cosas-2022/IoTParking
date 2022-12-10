@@ -1,10 +1,12 @@
-CREATE TABLE Reservas
+
+
+
+
+CREATE TABLE Usuarios
 (
     ID int identity(1,1) not null primary key,
-    ID_Matricula INT not null, 
-    Fecha_Reserva DATETIME not null ,
-	Duracion int not null,
-	FOREIGN KEY (ID_Matricula) References Matriculas(ID_Matricula)
+    Nombre varchar(100) not null, 
+    Password varchar(100) not null
 );
 
 CREATE TABLE Matriculas
@@ -15,9 +17,11 @@ CREATE TABLE Matriculas
 	FOREIGN KEY (ID_Usuario) References Usuarios(ID)
 );
 
-CREATE TABLE Usuarios
+CREATE TABLE Reservas
 (
     ID int identity(1,1) not null primary key,
-    Nombre varchar(100) not null, 
-    Password varchar(100) not null
+    ID_Matricula INT not null, 
+    Fecha_Reserva DATETIME not null ,
+	Duracion int not null,
+	FOREIGN KEY (ID_Matricula) References Matriculas(ID_Matricula)
 );

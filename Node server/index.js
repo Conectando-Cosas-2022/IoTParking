@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
 const os = require("os");
 let sqlHelper = new DbHelper();
-let imagenTotal = "";
+let availableSpots = [true,true,true,true];
 
 const formData = require("express-form-data");
 
@@ -44,20 +44,33 @@ app.get('/', (req, res) => {
     console.log(` ${str} - Nueva request`);
     
     var file = fs.readFile("../a.jpg",(err,data)=>{
+
         tessereact.recognize(data).then((textData)=>{
+          //var clean = cleanData(textData.text);
         console.log(` ${str} - ${textData.data.text}`);
+        
+    });
 
-    })
-    
-    
-
-
-    })
+    });
     
 
     res.sendFile(path.join(__dirname,'WebServer/Views/LoginPage.html'));
 
 })
+
+function cleanData(data){
+  let splitData = data.split(" ");
+  for(let split in splitData){
+      if(split.length()>=3 && isValidPlateString(split)){
+        return split;
+      }
+  }
+}
+
+function isValidPlateString(split){
+  var regEx = /[ `!@#$%^&*()_+\=\[\]{};':"\\|,.<>\/?~]/;
+  return !regEx.test(split);
+}
 
 app.get('/Register', (req, res) => {
   let ts = Date.now();
@@ -94,7 +107,7 @@ app.get('/registerplate',(req,res)=>{
 
 function sendRegisterPage(res){
   res.sendFile(path.join(__dirname,'WebServer/Views/RegisterPage.html'));
-}
+};
 
 function sendLoginPage(res){
   res.send({
@@ -104,62 +117,15 @@ function sendLoginPage(res){
   })
 }
 
-app.get("/uploads1",async (req,res)=>{
-  //console.log(req);
-  //console.log(request);
-  let database64 = req.query.data;
-  //res.send(request);
-  console.log("Data 1 es:");
-  //console.log(req.data);
-  let replaced = database64.replaceAll(' ','+');
-  console.log(replaced) ;
-  imagenTotal += replaced;
-  res.send("a");
-  return;
-  var data = fs.readFile("./a.png",(err,data)=>{
-    let textData = tessereact.recognize(data).then((textData)=>{
-      console.log(`${textData.data.text}`);
-    res.send(textData.data.text);
-    }).catch((err)=>{
-      throw err;
-    });
-    
-  });
+app.get("/photoUploaded",async (req,res)=>{
+  
 
   
     
 
 });
 
-  app.get("/uploads2",async (req,res)=>{
-    //console.log(req);
-  let data2 = req.query.data;
-  //res.send(request);
-  console.log("Total es:");
-  let replaced = data2.replaceAll(' ','+');
-  //console.log(data2) ;
-  imagenTotal += replaced;
-  console.log(imagenTotal);
-  let buffer = Buffer.from(imagenTotal,'base64');
-  console.log(buffer);
-
-  fs.writeFileSync('image.jpg', replaced, {encoding: 'base64'},(err)=>{
-    console.log("File created");
-  });
-  imagenTotal = "";
-  res.send("a");
-  return;
-  var data = fs.readFile("./a.png",(err,data)=>{
-    let textData = tessereact.recognize(data).then((textData)=>{
-      console.log(`${textData.data.text}`);
-    res.send(textData.data.text);
-    }).catch((err)=>{
-      throw err;
-    });
-    
-  });
-
-  })
+  
 
 app.post('/registerUser', async (req,res)=>{
   /*
@@ -294,13 +260,14 @@ app.post("/saveReservation",async (req,res)=>{
 
       let plate = req.params.plateNumber;
 
-      var parsedDate = sqlHelper.parseDate(day,month,year,time);
-      //Revisar reservas que se solapen
+      var oldres = sqlHelper.getReservationList(plate);
 
-      if(!sqlHelper.reservationExists(plate,parsedDate)){
+
+
+      if(!reservationExists(plate,parsedDate,duration)){
         
         sqlHelper.addReservation(plate,parsedDate);
-
+          
 
       }else{
 
@@ -319,6 +286,32 @@ app.post("/saveReservation",async (req,res)=>{
 
 
 });
+
+function getEndDate(startdate,duration){
+  let dateClone = new Date(startDate.getTime());
+  dateClone.setMinutes(dateClone.getMinutes() + duration);
+  return dateClone;
+}
+
+function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
+  if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
+  if (a_start <= b_end   && b_end   <= a_end) return true; // b ends in a
+  if (b_start <  a_start && a_end   <  b_end) return true; // a in b
+  return false;
+}
+
+function reservationExists(startdate,duration,reservationsRecordset){
+  let newendDate = getEndDate(startdate,duration);
+
+  for(let reservation in reservationsRecordset){
+    let oldstartdate = reservation.Fecha_Reserva;
+    let oldenddate = getEndDate(reservation.Fecha_Reserva,reservation.Duracion);
+    if(dateRangeOverlaps(startdate,newendate,oldstartdate,oldenddate)){
+      return true;
+    }
+  }
+  return false;
+}
 
 app.get("/registeredPlates",(req,res)=>{
   /*
