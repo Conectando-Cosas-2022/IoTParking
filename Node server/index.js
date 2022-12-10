@@ -265,6 +265,11 @@ app.post("/saveReservation",async (req,res)=>{
       if(!reservationExists(plate,parsedDate,duration)){
         
         sqlHelper.addReservation(plate,parsedDate);
+        res.send({
+          error:true,
+          msg:"Reserva creada con éxito",
+          redirect:""
+        })
       }else{
 
         res.send({

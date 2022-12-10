@@ -99,9 +99,9 @@ class DbHelper{
 
     }
 
-    async getReservationList(plateNumber){
+    async getReservationList(){
         try{
-        let date = await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas where Matriculas.Matricula = ${plateNumber}`;
+        let date = await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas`;
             return date.recordset;
         }catch(ex){
             console.log(ex);
