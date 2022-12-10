@@ -70,4 +70,9 @@ void loop() {
   delay(3000);
   prender(lugar4, largo4, numTira, verde);
   delay(3000);
+  numTira = 2;
+  prender(lugar1, largo1, numTira, otroColor);
+  delay(3000);
+  prender(lugar2, largo2, numTira, verde);
+  delay(3000);
 }
