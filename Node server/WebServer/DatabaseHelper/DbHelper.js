@@ -39,11 +39,13 @@ class DbHelper{
 
         */  let nowDate = new Date();
             let reservations = await this.sql.query`select * from Reservas where Lugar = ${spot}`;
+            let resrecordset = reservations.recordset;
             for(let i = 0; i < reservations.recordset.length;i++){
-                let resDate = reservations[i].Fecha_Reserva;
+                let resDate = resrecordset[i].Fecha_Reserva;
+                resDate.setMinutes(resDate.getMinutes()+180);
 
-                if(nowdate - resDate > 0){
-                    let minDif = (nowDate - resDate)/60000;
+                if(resDate - nowDate > 0){
+                    let minDif = (resDate - nowDate)/60000;
 
                     if(minDif <= 60){
                         return true;
@@ -58,13 +60,14 @@ class DbHelper{
     async activeReservationExists(spot){
         let nowDate = new Date();
         let reservations = await this.sql.query`select * from Reservas where Lugar = ${spot}`;
+        let resrecordset = reservations.recordset;
         for(let i = 0; i < reservations.recordset.length;i++){
-            let startDate = reservations[i].Fecha_Reserva;
-            let duration = reservations[i].Duracion;
-
+            let startDate = resrecordset[i].Fecha_Reserva;
+            startDate.setMinutes(startDate.getMinutes()+180);
+            let duration = resrecordset[i].Duracion;
             let endDate = this.getEndDate(startDate,duration);
 
-            if(startDate - nowDate > 0 && nowDate - endDate > 0){
+            if(startDate - nowDate < 0 && endDate - nowDate > 0){
                 return true;
             }
             
@@ -73,12 +76,27 @@ class DbHelper{
     }
       
     async tieneReservaMatricula(matricula){
+        //Terminar...
         let reservas = await this.sql.query`select * from Reservas inner join Matriculas on Matriculas.ID_Matricula = Reservas.ID_Matricula where Matricula = ${matricula}`;
-        let fechaActual = new Date();
-        for(let unaReserva of reservas.recordset){
-            let diferencia = unaReserva.Fecha_Reserva - fechaActual;
-            console.log(diferencia);
+        let currentDate = new Date();
+        for(let i = 0; i < reservas.recordset.length;i++){
+            let unaReserva = reservas.recordset[i];
+            let startDate = unaReserva.Fecha_Reserva;
+            startDate.setMinutes(startDate.getMinutes()+180);
+            let endDate = this.getEndDate(startDate,unaReserva.Duracion);
+            let firstDif = startDate - currentDate;
+            let endDif = endDate - currentDate;
+            if(firstDif < 0 && endDif > 0){
+                return {
+                    hasReservation:true,
+                    spot:unaReserva.Lugar
+                }
+            }
+
         }
+
+        return {hasReservation:false,
+        spot:-1};
     }
 
     async userExists(username){
@@ -143,9 +161,9 @@ class DbHelper{
 
     }
 
-    async getReservationList(){
+    async getReservationsList(spot){
         try{
-        let date = await this.sql.query`select Fecha_Reserva,Duracion from Reservas inner join Matriculas on Reservas.ID_Reserva=Matriculas.ID_Reservas`;
+        let date = await this.sql.query`select Fecha_Reserva,Duracion from Reservas where Lugar = ${spot}`;
             return date.recordset;
         }catch(ex){
             console.log(ex);
@@ -153,9 +171,10 @@ class DbHelper{
         }
     }
 
-    async addReservation(plateNumber,reservationDate,duration){
+    async addReservation(plateNumber,reservationDate,duration,spot){
         try{
-                await this.sql.query`INSERT INTO [dbo].[Reservas] (ID_Matricula,Fecha_Reserva,Duracion) values (${plateNumber},${reservationDate},${duration})`;
+                reservationDate.setMinutes(reservationDate.getMinutes() - 180);
+                await this.sql.query`INSERT INTO Reservas (ID_Matricula,Fecha_Reserva,Duracion,Lugar) values ((select ID_Matricula from Matriculas where Matricula = ${plateNumber}),${reservationDate},${duration},${spot})`;
             }catch(ex){
                 console.log(ex);
                 throw ex;

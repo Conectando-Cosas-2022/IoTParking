@@ -44,7 +44,6 @@ app.get('/', (req, res) => {
 
   console.log(` ${str} - Nueva request`);
 
-  sqlHelper.tieneReservaMatricula("ABC1234");
 
 
   res.sendFile(path.join(__dirname, 'WebServer/Views/LoginPage.html'));
@@ -52,13 +51,15 @@ app.get('/', (req, res) => {
 });
 
 function cleanData(data) {
-  let splitData = data.split(" ");
-  for (let split in splitData) {
-    if (split.length >= 3 && isValidPlateString(split)) {
-      return split;
+  let dataparse = data.replace("\n","");
+  let splitData = dataparse.split(" ");
+  for (let i = 0;i < splitData.length ; i++) {
+    let valid =  isValidPlateString(splitData[i])
+    if (splitData[i].length >= 3 && valid) {
+      return splitData[i];
     }
   }
-  return "";
+  return " ";
 }
 
 function isValidPlateString(split) {
@@ -120,7 +121,7 @@ app.get("/photoUploaded", async (req, res) => {
     let textData = await tessereact.recognize(file);
     let plate = cleanData(textData.data.text);
     console.log(plate);
-    if (sqlHelper.plateExists(data)) {
+    if (sqlHelper.plateExists(plate)) {
       let spot = await obtenerLugarDisponible(plate);
       res.send({
         availableSpot: spot
@@ -268,15 +269,16 @@ app.post("/saveReservation", async (req, res) => {
   if (userID != null) {
 
 
-    let plate = req.params.plateNumber;
-    let date = new Date(req.params.date);
-    var oldres = sqlHelper.getReservationList(plate);
+    let plate = req.body.plateNumber;
+    let date = new Date(req.body.date);
+    let duration = req.body.duration;
+    let spot = req.body.spot;
 
+    let reservations = await sqlHelper.getReservationsList(spot);
+    
+    if (!reservationExists(date,duration,reservations)) {
 
-
-    if (!reservationExists(plate, parsedDate, duration)) {
-
-      sqlHelper.addReservation(plate, parsedDate);
+      await sqlHelper.addReservation(plate, date,duration,spot);
       res.send({
         error: true,
         msg: "Reserva creada con éxito",
@@ -316,9 +318,12 @@ function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
 function reservationExists(startdate, duration, reservationsRecordset) {
   let newenddate = getEndDate(startdate, duration);
 
-  for (let reservation in reservationsRecordset) {
+  for (let i=0;i< reservationsRecordset.length; i++) {
+    let reservation = reservationsRecordset[i];
     let oldstartdate = reservation.Fecha_Reserva;
-    let oldenddate = getEndDate(reservation.Fecha_Reserva, reservation.Duracion);
+    oldstartdate.setMinutes(oldstartdate.getMinutes() + 180);
+
+    let oldenddate = getEndDate(oldstartdate, reservation.Duracion);
     if (dateRangeOverlaps(startdate, newenddate, oldstartdate, oldenddate)) {
       return true;
     }
@@ -361,10 +366,10 @@ async function obtenerLugarDisponible(matricula) {
       devuelvo lugar
     */
 
-
-  if (await sqlHelper.tieneReservaMatricula(matricula)) {
+  let resData = await sqlHelper.tieneReservaMatricula(matricula)
+  if (resData.hasReservation) {
     activePlates.push(matricula);
-    return await sqlHelper.getActiveReservationSpot(matricula);
+    return resData.spot;
   } else {
     activePlates.push(matricula);
     return await getAvailableSpot();
@@ -387,8 +392,8 @@ async function getAvailableSpot() {
 
   for (let j = 0; j < 4; j++) {
     if (availableSpots[j]) {
-      if (!(await sqlHelper.nextResLessThanOneHour(j)) && !(await sqlHelper.activeReservationExists(j))) {
-        return j;
+      if (!(await sqlHelper.nextResLessThanOneHour(j+1)) && !(await sqlHelper.activeReservationExists(j+1))) {
+        return j+1;
       }
     }
   }
