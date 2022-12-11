@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/mainPage.css">
+    <script src="JS/MainPage.js"></script>
     <title>Sitio principal IoTParking</title>
 </head>
 
-<body id="body">
+<body id="body" onload="windowLoaded()">
     <header>
     </header>
     <h1 id="titulo" style="color: white"> IoT Parking </h1>
@@ -15,9 +16,9 @@
     <div id="idMenu">
         <a href=#Notificaciones><img src="img/campanaChica.png" id="idNotificaciones" alt="#Notificaciones.png"
                 class="iconos"></a>
-        <a href=#Reservas id="idReservas"><img src="img/reservas.png" id="idReservaIcono" alt="reservas.png"></a>
+        <a href=reservas id="idReservas"><img src="img/reservas.png" id="idReservaIcono" alt="reservas.png"></a>
         <!--<a href=#Consultas><img src="img/notificaciones.png" id="notificaciones" alt="nombreCliente.png" class="iconos"></a>-->
-        <p style="color: white">Va el nombre del cliente</p>
+        <p style="color: white" id="idUsername"></p>
     </div>
     <br>
     <div id="divUnionRegistroCambioPlate">
@@ -28,7 +29,7 @@
             <br>
         </div>
         <div id="idDivBtnRegistroCambioPlate">
-            <input type="button" id="idRegistroCambioPlate" value="Registro o cambio" class="botones">
+            <input type="button" id="idRegistroCambioPlate" value="Registro o cambio" onclick="registroMatriculaRedirect()" class="botones">
         </div>
         <br>
     </div>
@@ -36,7 +37,7 @@
     <div id="idDivLugarAsignado">
         <br><br>
         <label for="idLugarAsignado" class="labels" style="color: white">Ve tu lugar lugar asignado</label>
-        <input type="button" id="idLugarAsignado" value="Lugar asignado" class="botones">
+        <input type="button" id="idLugarAsignado" value="Lugar asignado" onclick="lugarAsignadoRedirect()" class="botones">
         <br><br>
     </div>
     <br><br>

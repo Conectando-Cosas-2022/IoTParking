@@ -29,13 +29,17 @@ async function saveReservationRequest(){
     console.log(startDate);
     console.log("La starthour es:");
     let startHour = document.getElementById("idHora").value;
+    let resDuration = document.getElementById("idDuracion").value;
+    let mat = document.getElementById("idMat").value;
     console.log(startHour);
     let parsedDate = startDate +" "+startHour;
     console.log(new Date(parsedDate));
 
     request = {
-        plateNumber: user,
-        date: parsedDate
+        plateNumber: mat,
+        date: parsedDate,
+        duration: resDuration,
+        spot:currentSelectedValue + 1
     };
 
 const response = await fetch("saveReservation", {
@@ -47,15 +51,16 @@ const response = await fetch("saveReservation", {
     body:JSON.stringify(request)
 
 });
+alert(response.msg);
+
+if(response.redirect != ""){
+    window.location.href = response.redirect;
+}
 }
 
-async function registerPost(user, pass){
-
-
-    
-
-
-
-return response;
-
+async function reserveClick(){
+    await saveReservationRequest();
 }
+
+
+

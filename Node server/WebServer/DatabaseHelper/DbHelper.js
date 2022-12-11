@@ -140,8 +140,9 @@ class DbHelper{
         }
     }
 
+
     async getUserIdFromPlate(plate){
-        let userset = await this.sql.query`select ID_Usuario from Matricula where Matricula = ${plate}`;
+        let userset = await this.sql.query`select ID_Usuario from Matriculas where Matricula = ${plate}`;
         return userset.recordset[0].ID_Usuario;
     }
 
@@ -182,6 +183,7 @@ class DbHelper{
                 await this.sql.query`INSERT INTO Reservas (ID_Matricula,Fecha_Reserva,Duracion,Lugar) values ((select ID_Matricula from Matriculas where Matricula = ${plateNumber}),${reservationDate},${duration},${spot})`;
             }catch(ex){
                 console.log(ex);
+                
                 throw ex;
             }
     }

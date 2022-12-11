@@ -10,6 +10,8 @@ let sqlHelper = new DbHelper();
 let availableSpots = [true, true, true, true];
 let activePlates = [];
 let notificationsPopupPollingData = []; 
+let debugPlate = "";
+let debugEnabled = false;
 
 const formData = require("express-form-data");
 
@@ -89,6 +91,8 @@ app.get('/main', (req, res) => {
   res.sendFile(path.join(__dirname, 'WebServer/Views/MainPage.html'));
 });
 
+
+
 app.get('/notifications', (req, res) => {
   res.sendFile(path.join(__dirname, 'WebServer/Views/NotificationsPage.html'));
 });
@@ -115,19 +119,54 @@ function sendLoginPage(res) {
 
 //DEBUG//
 app.post("/getActivePlates",(req,res)=>{
-  res.send(availableSpots);
+  res.send(activePlates);
+});
+
+app.post("/debugSwitch",(req,res)=>{
+    let platetocheck = req.body.plate;
+    let isen = req.body.isEnabled;
+
+    debugPlate = platetocheck;
+    debugEnabled = isen;
+
+    res.send(`${debugPlate} - ${debugEnabled}`);
 })
 
+app.post("/userHasActivePlates",async (req,res)=>{
+  let userIDtoCheck = req.body.userId;
+  let sent = false;
+  for(let plate of activePlates){
+    let userId = await sqlHelper.getUserIdFromPlate(plate.matric);
+    if(userIDtoCheck == userId){
+      sent = true;
+      res.send(
+        {
+        plate:plate.matric,
+        spot:plate.lugar,
+        isActive:true
+      });
+      break;
+    
+    }
+  }
+  if(!sent){
+    res.send({isActive:false});
+  }
 
+
+});
 app.get("/photoUploaded", async (req, res) => {
 
 
 
   try {
-    var file = fs.readFileSync("a.jpg");
-    let textData = await tessereact.recognize(file);
-    let plate = cleanData(textData.data.text);
-    plate = "Arial";
+    let plate = debugPlate;
+    if(!debugEnabled){
+      var file = fs.readFileSync("a.jpg");
+      let textData = await tessereact.recognize(file);
+      plate = cleanData(textData.data.text);
+    }
+
     console.log(plate);
     if (sqlHelper.plateExists(plate)) {
       let spot = await obtenerLugarDisponible(plate);
@@ -203,13 +242,13 @@ app.post('/loginUser', async (req, res) => {
   } else {
     if (await sqlHelper.loginUser(username, password)) {
       let user = await sqlHelper.getUser(username);
-      res.cookie('UserID', user.ID, { maxAge: 900000, httpOnly: true });
-      res.cookie('UserName', user.Nombre, { maxAge: 900000, httpOnly: true });
+      res.cookie('UserID', user.ID, { maxAge: 900000, httpOnly: false });
+      res.cookie('UserName', user.Nombre, { maxAge: 900000, httpOnly: false });
 
       res.send({
         error: false,
         msg: "Logeado con exito",
-        redirect: ""
+        redirect: "/main"
       });
 
     } else {
@@ -316,6 +355,15 @@ app.post("/actionComplete",(req,res)=>{
   res.send("success");
 });
 
+app.get("/reservas",(req,res)=>{
+  let userID = req.cookies.UserID;
+  if (userID != null) {
+    res.sendFile(path.join(__dirname, 'WebServer/Views/ReservationsPage.html'));
+  }else{
+    sendLoginPage(res);
+  }
+});
+
 app.post("/saveReservation", async (req, res) => {
   /**
    * 
@@ -356,9 +404,9 @@ app.post("/saveReservation", async (req, res) => {
 
       res.send({
         error: true,
-        msg: "Ya existe una reserva en ese periodo",
+        msg: `Ya existe una reserva en ese periodo para el lugar ${spot}`,
         redirect: ""
-      })
+      });
     }
 
 
@@ -438,7 +486,7 @@ async function obtenerLugarDisponible(matricula) {
   if (resData.hasReservation) {
     if(resData.spot != -1){
       activePlates.push({matric: matricula, lugar: spot});
-
+      availableSpots[spot-1] = false;
       return resData.spot;
     }
 
@@ -447,6 +495,7 @@ async function obtenerLugarDisponible(matricula) {
     let avspot = await getAvailableSpot();
     if(avspot != -1){
       activePlates.push({matric: matricula, lugar: avspot});
+      availableSpots[avspot-1] = false;
       return avspot;
     }
 

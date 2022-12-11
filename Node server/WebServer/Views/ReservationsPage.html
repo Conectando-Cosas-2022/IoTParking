@@ -13,6 +13,8 @@
     <br>
     <div id="divIndicarFecha">
         <h2 id="indicarDatos" style="color: white">Indique los datos de la reserva</h2>
+        <label for="idMat" class="labels" style="color: white">Escriba la matricula</label>
+        <input type="text" id="idMat">
         <label for="idFecha" class="labels" style="color: white">Seleccione la fecha a reservar:</label>
         <input type="date" id="idFecha">
         <label for="idHora" class="labels" style="color: white">Seleccione la hora:</label>
@@ -31,7 +33,7 @@
     </div>
     <br>
     <div id="divBtnAceptar">
-        <input type="button" id="idBtnAceptar" style="color: white" value="Aceptar">
+        <input type="button" id="idBtnAceptar" onclick="reserveClick()" style="color: white" value="Aceptar">
     </div>
 </body>
 
