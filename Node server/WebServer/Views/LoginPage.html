@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!-- head definitions go here -->
-        <title>IoT parking</title>
-        <link rel="stylesheet" href="CSS/GridModule.css"></link>
-        <script src="./JS/Login.js"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <!-- the content goes here -->
-        <div class="container">
-            <div class="Logo">
-                <img></img>
-            </div>
-            <div class="TextBox1">
-                <input style="margin: 30px;" placeholder="Nombre de usuario" type="text" id="TxtName" name="TxtName"/>
-            </div>
 
-            <div class="TextBox2">
-                <input type="password" placeholder="Contraseña" id="TxtPassword" name="fname"/>
-            </div>
-            
+<head>
+    <!-- head definitions go here -->
+    <title>IoT parking</title>
+    <link rel="stylesheet" href="CSS/loginPage.css">
+    </link>
+    <script src="./JS/Login.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-            <div class="Boton">
-                <button id="BtnLogin" onclick="loginClick()">Login</button>
-            </div>
+<body id="idBody">
+    <!-- the content goes here -->
+    <h1 id="titulo" style="color:white">Ingresar</h1>
+    <br>
+    <div class="container">
+        <div class="TextBox1">
+            <input style="margin: 30px;" placeholder="Nombre de usuario" class="inputs" type="text" id="TxtName"
+                name="TxtName" />
+        </div>
 
-            <div class="Pregunta">
-                <a href="/Register">¿Todavía no tenes una cuenta? Haz click aqui</a >
-            </div>
-          </div>
-    </body>
+        <div class="TextBox2">
+            <input type="password" placeholder="Contraseña" id="TxtPassword" class="inputs" name="fname" />
+        </div>
+    </div>
+    <br>
+    <br>
+    <div class="container2">
+        <div class="Boton">
+            <button id="BtnLogin" onclick="loginClick()" class="inputs">Login</button>
+        </div>
+
+        <div class="Pregunta">
+            <a href="/Register">¿Todavía no tenes una cuenta? Haz click aquí</a>
+        </div>
+    </div>
+
+</body>
+
 </html>
