@@ -19,10 +19,10 @@ uint32_t otroColor = tira1.Color(75, 12, 110);
 //uint32_t negro = tira1.Color(0, 0, 0);
 
 //Definimos los largos que indican hasta que led debe encenderce para señalar el lugar asignado
-int largo1 = 6;
+int largo1 = 9;
 int* lugar1 = new int[largo1];
 
-int largo2 = 12;
+int largo2 = 15;
 int* lugar2 = new int[largo2];
 
 int largo3 = 41;
