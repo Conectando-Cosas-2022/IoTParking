@@ -8,6 +8,7 @@
 #include <HTTPClient.h>
 #include "ESP32_FTPClient.h"
 #include <sstream> 
+#include <Servo.h>
 
 using namespace std;
 #define PIN 2
@@ -41,7 +42,7 @@ int* lugar3 = new int[largo3];
 
 int largo4 = 48;
 int* lugar4 = new int[largo4];
-
+const int sensor = 5;
 
 const char* ssid = "Aloha";
 const char* password = "carlitos2304";
@@ -56,9 +57,9 @@ ESP32_FTPClient ftp(ftp_server,ftp_user,ftp_pass, 5000, 2);
 
 String serverName = "172.20.10.2";
 
-
+Servo myservo;
 const int serverPort = 80;
-
+HTTPClient http;
 WiFiClient client;
 
 const int timerInterval = 20000;    // time between each HTTP POST image
@@ -71,9 +72,10 @@ unsigned long previousMillis = 0;   // last time image was sent
 
 void setup() {
   Serial.begin(115200);
-  pinMode(5,INPUT);
-
+  pinMode(sensor,INPUT);
   // inicializamos tira1 y tira2
+  myservo.attach(14);
+
   tira1.begin();
   tira2.begin();
 
@@ -159,7 +161,6 @@ void setup() {
 
 
 void sendPhotoFTP() {
-  HTTPClient http;
   String getAll;
 
   camera_fb_t * fb = NULL;
@@ -208,7 +209,7 @@ void prender(int* lugar, int largo, int numTira, uint32_t color) {
 }
 
 int getAvailableSpot(){
-  HTTPClient http;
+
   http.begin("http://"+serverName + "/photoUploaded");
   http.GET();
   int lugar = http.getString().toInt();
@@ -217,26 +218,64 @@ int getAvailableSpot(){
   return lugar;
 }
 
+void upBarrierRequest(){
+  String req = "{\"spot\":" + String(spot) + "}";
+  Serial.println("http://" + serverName + "/subirBarrera";
+  http.begin(client, "http://" + serverName + "/subirBarrera");
+  http.addHeader("Content-Type", "application/json");
+  http.POST(req);
+
+}
+
+void openMainBarrier(){
+  int angulo = 180;
+  myservo.write(angulo);
+  
+}
+
+void closeMainBarrier(){
+  int angulo = 0;
+  myservo.write(angulo);
+  
+}
+
+void upBarrierRequest(int spot){
+  String req = "{\"spot\":" + String(spot) + "}";
+  Serial.println("http://" + serverName + "/subirBarrera");
+  http.begin(client, "http://" + serverName + "/subirBarrera");
+  http.addHeader("Content-Type", "application/json");
+  http.POST(req);
+
+}
+
+
 
 void loop() {
-  unsigned long currentMillis = millis();
-  if(digitalRead(5) == LOW){
+  
+  if(digitalRead(sensor) == LOW){
+    
     sendPhotoFTP();
     int avSpot = getAvailableSpot();
+    upBarrierRequest(avSpot);
     int numTira = 1;
     if(avSpot == 1){
       numTira = 2;
       prender(lugar1, largo1, numTira, otroColor);
+      openMainBarrier();
     }else if(avSpot == 2){
       numTira = 2;
       prender(lugar2, largo2, numTira, verde);
+      openMainBarrier();
     }else if(avSpot == 3){
       prender(lugar3, largo3, numTira, rojo);
+      openMainBarrier();
     }else if(avSpot == 4){
       prender(lugar4, largo4, numTira, verde);
+      openMainBarrier();
     }
 
     //prenderDisp(avSpot);
-    delay(5000);
+    delay(15000);
+    closeMainBarrier();
     }
 }
