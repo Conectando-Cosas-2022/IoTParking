@@ -344,7 +344,7 @@ app.post("/bajarBarrera",(req,res)=>{
   res.send("success");
 });
 
-app.post("/esp8266pollingdata",(req,res)=>{
+app.get("/esp8266pollingdata",(req,res)=>{
   res.send(notificationsPopupPollingData);
 });
 
@@ -465,6 +465,12 @@ app.get("/registeredReservations", (req, res) => {
       en la base de datos, hay que revisar todas las reservas que se den dentro de ese periodo de tiempo
       las mando
   */
+});
+
+app.post("/removeActivePlate",(req,res)=>{
+  activePlates = activePlates.filter(x=>x.lugar != spot);
+  res.send(activePlates);
+  
 });
 
 
