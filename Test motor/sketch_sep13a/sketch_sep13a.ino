@@ -45,8 +45,8 @@ void setup() {
 
  server.on("/LED_BUILTIN_on", []() {
    digitalWrite(LED_BUILTIN, 1);
-   angulo= 0;
-  myservo.write(angulo);
+    angulo= 0;
+    myservo.write(angulo);
   Serial.print("ángulo:  ");
   Serial.println(angulo);
   delay(2000);

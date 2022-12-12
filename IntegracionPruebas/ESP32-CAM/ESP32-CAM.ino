@@ -1,4 +1,4 @@
-/*Codido para ESP-32*/
+
 #include <WiFi.h>
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
@@ -8,9 +8,44 @@
 #include <HTTPClient.h>
 #include "ESP32_FTPClient.h"
 #include <sstream> 
+
 using namespace std;
+#define PIN 2
+#define pin2 4
+//Cantidad de pixeles de la led
+#define cantPixeles 60
+#include "Adafruit_NeoPixel.h"
+//Para definir un color
+//uint32_t magenta = pixels.Color(255,0,255);
+
+//alternativa a dar color
+//pixels.setPixelColor(n, color);
+
+Adafruit_NeoPixel tira1 = Adafruit_NeoPixel(cantPixeles, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel tira2 = Adafruit_NeoPixel(cantPixeles, pin2, NEO_GRB + NEO_KHZ800);
+
+uint32_t rojo = tira1.Color(255, 0, 0);
+uint32_t verde = tira1.Color(0, 255, 0);
+uint32_t otroColor = tira1.Color(75, 12, 110);
+//uint32_t negro = tira1.Color(0, 0, 0);
+
+//Definimos los largos que indican hasta que led debe encenderce para señalar el lugar asignado
+int largo1 = 6;
+int* lugar1 = new int[largo1];
+
+int largo2 = 12;
+int* lugar2 = new int[largo2];
+
+int largo3 = 41;
+int* lugar3 = new int[largo3];
+
+int largo4 = 48;
+int* lugar4 = new int[largo4];
+
+
 const char* ssid = "Aloha";
 const char* password = "carlitos2304";
+
 
 char ftp_server[] = "192.168.2.192";
 char ftp_user[] = "iotparking";
@@ -21,7 +56,6 @@ ESP32_FTPClient ftp(ftp_server,ftp_user,ftp_pass, 5000, 2);
 
 String serverName = "172.20.10.2";
 
-String serverPath = "/uploads";     // The default serverPath
 
 const int serverPort = 80;
 
@@ -37,6 +71,26 @@ unsigned long previousMillis = 0;   // last time image was sent
 
 void setup() {
   Serial.begin(115200);
+  pinMode(5,INPUT);
+
+  // inicializamos tira1 y tira2
+  tira1.begin();
+  tira2.begin();
+
+  //Rellenamos los vectores de las led que deben ir encendidas
+  for (int i = 0; i < largo1; i++) {
+    lugar1[i] = i;
+  }
+  for (int i = 0; i < largo2; i++) {
+    lugar2[i] = i;
+  }
+  for (int i = 0; i < largo3; i++) {
+    lugar3[i] = i;
+  }
+  for (int i = 0; i < largo4; i++) {
+    lugar4[i] = i;
+  }
+
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
   WiFi.mode(WIFI_STA);
   Serial.println();
@@ -104,7 +158,7 @@ void setup() {
 }
 
 
-void sendPhoto() {
+void sendPhotoFTP() {
   HTTPClient http;
   String getAll;
 
@@ -137,10 +191,52 @@ void sendPhoto() {
 
 }
 
+void prender(int* lugar, int largo, int numTira, uint32_t color) {
+  if (numTira == 1) {
+    tira1.clear();
+    for (int i = 0; i < largo; i++) {
+      tira1.setPixelColor(lugar[i], color);
+    }
+    tira1.show();
+  } else {
+    tira2.clear();
+    for (int i = 0; i < largo; i++) {
+      tira2.setPixelColor(lugar[i], color);
+    }
+    tira2.show();
+  }
+}
+
+int getAvailableSpot(){
+  HTTPClient http;
+  http.begin("http://"+serverName + "/photoUploaded");
+  http.GET();
+  int lugar = http.getString().toInt();
+  Serial.println("Lugar obtenido fue");
+  Serial.println(lugar);
+  return lugar;
+}
+
+
 void loop() {
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= timerInterval) {
-    sendPhoto();
-    previousMillis = currentMillis;
-  }
+  if(digitalRead(5) == LOW){
+    sendPhotoFTP();
+    int avSpot = getAvailableSpot();
+    int numTira = 1;
+    if(avSpot == 1){
+      numTira = 2;
+      prender(lugar1, largo1, numTira, otroColor);
+    }else if(avSpot == 2){
+      numTira = 2;
+      prender(lugar2, largo2, numTira, verde);
+    }else if(avSpot == 3){
+      prender(lugar3, largo3, numTira, rojo);
+    }else if(avSpot == 4){
+      prender(lugar4, largo4, numTira, verde);
+    }
+
+    //prenderDisp(avSpot);
+    delay(5000);
+    }
 }

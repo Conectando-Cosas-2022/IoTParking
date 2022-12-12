@@ -344,7 +344,7 @@ app.post("/bajarBarrera",(req,res)=>{
   res.send("success");
 });
 
-app.post("/esp8266pollingdata",(req,res)=>{
+app.get("/esp8266pollingdata",(req,res)=>{
   res.send(notificationsPopupPollingData);
 });
 
