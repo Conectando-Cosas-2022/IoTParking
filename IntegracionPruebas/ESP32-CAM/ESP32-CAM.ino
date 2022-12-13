@@ -8,15 +8,15 @@
 #include <HTTPClient.h>
 #include "ESP32_FTPClient.h"
 #include <sstream> 
-#include <Servo.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <pwmWrite.h>
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
+Pwm pwm = Pwm();
 // Declaration for SSD1306 display connected using software SPI (default case):
 #define OLED_MOSI   12
 #define OLED_RESET 13
@@ -73,7 +73,7 @@ ESP32_FTPClient ftp(ftp_server,ftp_user,ftp_pass, 5000, 2);
 
 String serverName = "172.20.10.2";
 
-Servo myservo;
+
 const int serverPort = 80;
 HTTPClient http;
 WiFiClient client;
@@ -102,7 +102,7 @@ void setup() {
   // Clear the buffer
   display.clearDisplay();
 
-  myservo.attach(14);
+
 
   tira1.begin();
   tira2.begin();
@@ -195,7 +195,7 @@ void testdrawchar(char a) {
   display.setCursor(0, 0);     // Start at top-left corner
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
 
-  display.write(a)
+  display.write(a);
 
   display.display();
 }
@@ -258,24 +258,17 @@ int getAvailableSpot(){
   return lugar;
 }
 
-void upBarrierRequest(){
-  String req = "{\"spot\":" + String(spot) + "}";
-  Serial.println("http://" + serverName + "/subirBarrera";
-  http.begin(client, "http://" + serverName + "/subirBarrera");
-  http.addHeader("Content-Type", "application/json");
-  http.POST(req);
 
-}
 
 void openMainBarrier(){
   int angulo = 180;
-  myservo.write(angulo);
+  pwm.writeServo(16, angulo);
   
 }
 
 void closeMainBarrier(){
   int angulo = 0;
-  myservo.write(angulo);
+  pwm.writeServo(16, angulo);
   
 }
 
