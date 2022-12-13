@@ -28,7 +28,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 using namespace std;
 #define PIN 2
-#define pin2 4
+#define pin2 0
 //Cantidad de pixeles de la led
 #define cantPixeles 60
 #include "Adafruit_NeoPixel.h"
@@ -58,7 +58,7 @@ int* lugar3 = new int[largo3];
 
 int largo4 = 48;
 int* lugar4 = new int[largo4];
-const int sensor = 5;
+const int sensor = 16;
 
 const char* ssid = "Aloha";
 const char* password = "carlitos2304";
@@ -187,7 +187,7 @@ void setup() {
 
 }
 
-void testdrawchar() {
+void testdrawchar(char a) {
   display.clearDisplay();
 
   display.setTextSize(1);      // Normal 1:1 pixel scale
@@ -195,12 +195,7 @@ void testdrawchar() {
   display.setCursor(0, 0);     // Start at top-left corner
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
 
-  // Not all the characters will fit on the display. This is normal.
-  // Library will draw what it can and the rest will be clipped.
-  for(int16_t i=0; i<256; i++) {
-    if(i == '\n') display.write(' ');
-    else          display.write(i);
-  }
+  display.write(a)
 
   display.display();
 }
@@ -306,16 +301,20 @@ void loop() {
     if(avSpot == 1){
       numTira = 2;
       prender(lugar1, largo1, numTira, otroColor);
+        testdrawchar('1');
       openMainBarrier();
     }else if(avSpot == 2){
       numTira = 2;
       prender(lugar2, largo2, numTira, verde);
+      testdrawchar('2');
       openMainBarrier();
     }else if(avSpot == 3){
       prender(lugar3, largo3, numTira, rojo);
+      testdrawchar('3');
       openMainBarrier();
     }else if(avSpot == 4){
       prender(lugar4, largo4, numTira, verde);
+      testdrawchar('4');
       openMainBarrier();
     }
 

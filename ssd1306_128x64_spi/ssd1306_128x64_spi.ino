@@ -24,10 +24,10 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
 // Declaration for SSD1306 display connected using software SPI (default case):
-#define OLED_MOSI   12
+#define OLED_MOSI   12 //D1
 #define OLED_RESET 13
 #define OLED_CS    15
-#define OLED_CLK   14
+#define OLED_CLK   14 //D0
 #define OLED_DC    4
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
