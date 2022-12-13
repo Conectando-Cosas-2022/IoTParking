@@ -8,7 +8,7 @@ let DbHelper = require("./WebServer/DatabaseHelper/DbHelper");
 const os = require("os");
 let sqlHelper = new DbHelper();
 let availableSpots = [true, true, true, true];
-let activePlates = [{matric:'ABC',lugar:1}];
+let activePlates = [];
 let notificationsPopupPollingData = []; 
 let debugPlate = "";
 let debugEnabled = false;
@@ -468,7 +468,9 @@ app.get("/registeredReservations", (req, res) => {
 });
 
 app.post("/removeActivePlate",(req,res)=>{
+  let spot = req.body.spot;
   activePlates = activePlates.filter(x=>x.lugar != spot);
+  availableSpots[spot-1] = true;
   res.send(activePlates);
   
 });

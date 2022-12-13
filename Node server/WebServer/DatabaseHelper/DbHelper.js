@@ -8,9 +8,9 @@ class DbHelper{
 
         let config = {
             user: "AdminIot",
-            password: "iotparking",
+            password: "iotparking2",
             server: "localhost",
-            database: "Iotparking",
+            database: "Iotparking2",
             port:1433,
 	   options:{
 		trustServerCertificate: true
