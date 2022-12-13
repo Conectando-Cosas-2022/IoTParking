@@ -18,6 +18,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+//esptool.py --port <YOUR PORT> write_flash_status --non-volatile 0
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
@@ -94,7 +95,7 @@ void setup() {
 
 
 
-  testdrawstyles();    // Draw 'stylized' characters
+  testdrawchar();    // Draw 'stylized' characters
 
 
 
@@ -282,10 +283,7 @@ void testdrawchar(void) {
 
   // Not all the characters will fit on the display. This is normal.
   // Library will draw what it can and the rest will be clipped.
-  for(int16_t i=0; i<256; i++) {
-    if(i == '\n') display.write(' ');
-    else          display.write(i);
-  }
+  display.write(49);
 
   display.display();
   delay(2000);
