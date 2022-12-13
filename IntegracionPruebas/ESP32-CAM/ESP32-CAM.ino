@@ -9,7 +9,23 @@
 #include "ESP32_FTPClient.h"
 #include <sstream> 
 #include <Servo.h>
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Declaration for SSD1306 display connected using software SPI (default case):
+#define OLED_MOSI   12
+#define OLED_RESET 13
+#define OLED_CS    15
+#define OLED_CLK   14
+#define OLED_DC    4
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
+  OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 using namespace std;
 #define PIN 2
 #define pin2 4
@@ -74,6 +90,18 @@ void setup() {
   Serial.begin(115200);
   pinMode(sensor,INPUT);
   // inicializamos tira1 y tira2
+
+   if(!display.begin(SSD1306_SWITCHCAPVCC)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+
+  display.display();
+  delay(2000); // Pause for 2 seconds
+
+  // Clear the buffer
+  display.clearDisplay();
+
   myservo.attach(14);
 
   tira1.begin();
@@ -159,6 +187,23 @@ void setup() {
 
 }
 
+void testdrawchar() {
+  display.clearDisplay();
+
+  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextColor(SSD1306_WHITE); // Draw white text
+  display.setCursor(0, 0);     // Start at top-left corner
+  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+
+  // Not all the characters will fit on the display. This is normal.
+  // Library will draw what it can and the rest will be clipped.
+  for(int16_t i=0; i<256; i++) {
+    if(i == '\n') display.write(' ');
+    else          display.write(i);
+  }
+
+  display.display();
+}
 
 void sendPhotoFTP() {
   String getAll;
