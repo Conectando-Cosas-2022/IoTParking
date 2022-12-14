@@ -26,17 +26,17 @@ Pwm pwm = Pwm();
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-using namespace std;
-#define PIN 2
+// using namespace std;
+#define PIN 16
 #define pin2 0
 //Cantidad de pixeles de la led
 #define cantPixeles 60
 #include "Adafruit_NeoPixel.h"
 //Para definir un color
-//uint32_t magenta = pixels.Color(255,0,255);
+// uint32_t magenta = pixels.Color(255,0,255);
 
-//alternativa a dar color
-//pixels.setPixelColor(n, color);
+// //alternativa a dar color
+// pixels.setPixelColor(n, color);
 
 Adafruit_NeoPixel tira1 = Adafruit_NeoPixel(cantPixeles, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel tira2 = Adafruit_NeoPixel(cantPixeles, pin2, NEO_GRB + NEO_KHZ800);
@@ -58,10 +58,10 @@ int* lugar3 = new int[largo3];
 
 int largo4 = 48;
 int* lugar4 = new int[largo4];
-const int sensor = 16;
+const int sensor = 2;
 
-const char* ssid = "Aloha";
-const char* password = "carlitos2304";
+const char* ssid = "juaniypia1";
+const char* password = "1110scaffo";
 
 
 char ftp_server[] = "192.168.2.192";
@@ -89,8 +89,8 @@ unsigned long previousMillis = 0;   // last time image was sent
 void setup() {
   Serial.begin(115200);
   pinMode(sensor,INPUT);
-  // inicializamos tira1 y tira2
-
+  //inicializamos tira1 y tira2
+  Serial.println("Iniciando display!");
    if(!display.begin(SSD1306_SWITCHCAPVCC)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
@@ -99,15 +99,15 @@ void setup() {
   display.display();
   delay(2000); // Pause for 2 seconds
 
-  // Clear the buffer
+  //Clear the buffer
   display.clearDisplay();
 
 
-
+  Serial.println("Iniciando tiras!");
   tira1.begin();
   tira2.begin();
-
-  //Rellenamos los vectores de las led que deben ir encendidas
+  Serial.println("Tiras iniciadas");
+  // Rellenamos los vectores de las led que deben ir encendidas
   for (int i = 0; i < largo1; i++) {
     lugar1[i] = i;
   }
@@ -123,7 +123,6 @@ void setup() {
 
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
   WiFi.mode(WIFI_STA);
-  Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);  
@@ -182,15 +181,12 @@ void setup() {
     ESP.restart();
   }
 
-  sensor_t * s = esp_camera_sensor_get();
-  s->set_brightness(s, 2);
-
-}
+ }
 
 void testdrawchar(char a) {
   display.clearDisplay();
 
-  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextSize(10);      // Normal 1:1 pixel scale
   display.setTextColor(SSD1306_WHITE); // Draw white text
   display.setCursor(0, 0);     // Start at top-left corner
   display.cp437(true);         // Use full 256 char 'Code Page 437' font
@@ -262,13 +258,13 @@ int getAvailableSpot(){
 
 void openMainBarrier(){
   int angulo = 180;
-  pwm.writeServo(16, angulo);
+  pwm.writeServo(14, angulo);
   
 }
 
 void closeMainBarrier(){
   int angulo = 0;
-  pwm.writeServo(16, angulo);
+  pwm.writeServo(14, angulo);
   
 }
 
@@ -284,9 +280,17 @@ void upBarrierRequest(int spot){
 
 
 void loop() {
-  
+  Serial.println("Sensor no detecto nada");
   if(digitalRead(sensor) == LOW){
-    
+    if(digitalRead(sensor != LOW)){
+      return;
+    }
+    Serial.println("Sensor detecto!");
+  delay(1000);
+  Serial.println("Abriendo barrera!");
+  openMainBarrier();
+    delay(1000);
+  
     sendPhotoFTP();
     int avSpot = getAvailableSpot();
     upBarrierRequest(avSpot);
@@ -311,8 +315,8 @@ void loop() {
       openMainBarrier();
     }
 
-    //prenderDisp(avSpot);
-    delay(15000);
-    closeMainBarrier();
+   
+     delay(15000);
+  
     }
 }
