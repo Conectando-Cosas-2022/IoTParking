@@ -32,9 +32,9 @@ int SPOT2 = 4;
 
 const char* ssid = "Aloha";
 const char* password = "carlitos2304";
-int previousState1 = LOW;
+int previousState1 = HIGH;
 int currentState1 = LOW;
-int previousState2 = LOW;
+int previousState2 = HIGH;
 int currentState2 = LOW;
 // allocate the memory for the document
 StaticJsonDocument<CAPACITY> doc;
@@ -210,16 +210,39 @@ void pollingDataAction() {
 void checkSensorState() {
   int readSensor1 = digitalRead(sensor1);
   int readSensor2 = digitalRead(sensor2);
-    if (readSensor1 == HIGH && previousState1 == LOW) {
-      previousState1 = HIGH;
-    } else if (readSensor1 == LOW && previousState1 == HIGH) {
+  Serial.println("Estado1");
+      Serial.println(readSensor1);
+      Serial.println(previousState1);
+
+    if (readSensor1 == LOW && previousState1 == HIGH) {
+      delay(1000);
+      if(readSensor1 != LOW){
+        return;
+      }
+      previousState1 = LOW;
+    } else if (readSensor1 == HIGH && previousState1 == LOW) 
+    {
+      delay(1000);
+      if(readSensor1 != HIGH){
+        return;
+      }
       removeActivePlate(sensor1);
+      previousState1 = HIGH;
     }
 
-    if (readSensor2 == HIGH && previousState2 == LOW) {
-      previousState2 = HIGH;
-    } else if (readSensor2 == LOW && previousState2 == HIGH) {
+    if (readSensor2 == LOW && previousState2 == HIGH) {
+      delay(1000);
+      if(readSensor2 != LOW){
+        return;
+      }
+      previousState2 = LOW;
+    } else if (readSensor2 == HIGH && previousState2 == LOW) {
+      delay(1000);
+      if(readSensor2 != HIGH){
+        return;
+      }
       removeActivePlate(sensor2);
+      previousState2 = HIGH;
     }    
   
 }
@@ -249,4 +272,5 @@ void removeActivePlate(int sensor) {
 void loop() {
   delay(1000);
   pollingDataAction();
+  checkSensorState();
 }
