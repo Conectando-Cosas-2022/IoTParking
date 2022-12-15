@@ -51,11 +51,13 @@ const response = await fetch("saveReservation", {
     body:JSON.stringify(request)
 
 });
-alert(response.msg);
-
-if(response.redirect != ""){
-    window.location.href = response.redirect;
+let res = await response.json();
+if(!res.error){
+    alert("Reservado con exito!");
+}else{
+    alert("Ya existe una reserva en ese periodo");
 }
+
 }
 
 async function reserveClick(){

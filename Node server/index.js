@@ -1,6 +1,6 @@
 
 const express = require('express')
-const tessereact = require("tesseract.js");
+const tessereact = require("node-tesseract-ocr");
 const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -155,32 +155,30 @@ app.post("/userHasActivePlates",async (req,res)=>{
 
 
 });
-app.get("/photoUploaded", async (req, res) => {
-
-
-
-  try {
+app.post("/photoUploaded", async (req, res) => {
+    console.log("Se recibio el request a photoUploaded!");
     let plate = debugPlate;
     if(!debugEnabled){
-      var file = fs.readFileSync("a.jpg");
-      let textData = await tessereact.recognize(file);
-      plate = cleanData(textData.data.text);
+      let textData =await tessereact.recognize("C:\\Users\\usuario\\Documents\\GitHub\\IoTParking\\Node server\\a.jpg");
+        plate = cleanData(textData);
+        console.log(plate);
+      
     }
 
-    console.log(plate);
-    if (sqlHelper.plateExists(plate)) {
+    if (await sqlHelper.plateExists(plate)) {
       let spot = await obtenerLugarDisponible(plate);
-      res.send({
-        availableSpot: spot
-      });
+      res.send(spot.toString());
+
+    }else{
+      res.send("-1");
     }
+      
+      
+    
+   
+  
 
-
-  } catch (e) {
-    throw e;
-  }
-
-
+    //res.send({availableSpot: -1});
 
 });
 
@@ -333,14 +331,21 @@ app.post("/subirBarrera",(req,res)=>{
   let spot = req.body.spot;
   let upAction = true;
 
-  notificationsPopupPollingData.push({lugar: spot, arriba:upAction});
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1});
   res.send("success");
 });
 
 app.post("/bajarBarrera",(req,res)=>{
   let spot = req.body.spot;
   let upAction = false;
-  notificationsPopupPollingData.push({lugar: spot, arriba:upAction});
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1});
+  res.send("success");
+});
+
+app.post("/led",(req,res)=>{
+  let spotled = req.body.led;
+  let upAction = false;
+  notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:spotled});
   res.send("success");
 });
 
@@ -350,8 +355,17 @@ app.get("/esp8266pollingdata",(req,res)=>{
 
 app.post("/actionComplete",(req,res)=>{
   let spotdata = req.body.spot;
+  let led = req.body.led;
+  console.log("Estan tratando de terminar la accion led: "+led);
+  console.log("Lugar es "+spotdata);
+  if(led == 'false'){
   notificationsPopupPollingData = notificationsPopupPollingData
   .filter(polldata => polldata.lugar != spotdata);
+  }else{
+    let spotled = req.body.ledlugar;
+    notificationsPopupPollingData = notificationsPopupPollingData
+  .filter(polldata => polldata.ledlugar != spotled);
+  }
   res.send("success");
 });
 
@@ -399,7 +413,7 @@ app.post("/saveReservation", async (req, res) => {
         error: true,
         msg: "Reserva creada con éxito",
         redirect: ""
-      })
+      });
     } else {
 
       res.send({
@@ -493,8 +507,9 @@ async function obtenerLugarDisponible(matricula) {
   let resData = await sqlHelper.tieneReservaMatricula(matricula)
   if (resData.hasReservation) {
     if(resData.spot != -1){
-      activePlates.push({matric: matricula, lugar: spot});
-      availableSpots[spot-1] = false;
+      activePlates.push({matric: matricula, lugar: resData.spot});
+      availableSpots[resData.spot-1] = false;
+      notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:resData.spot});
       return resData.spot;
     }
 
@@ -504,6 +519,7 @@ async function obtenerLugarDisponible(matricula) {
     if(avspot != -1){
       activePlates.push({matric: matricula, lugar: avspot});
       availableSpots[avspot-1] = false;
+      notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:avspot});
       return avspot;
     }
 

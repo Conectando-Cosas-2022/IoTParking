@@ -18,14 +18,14 @@
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 Pwm pwm = Pwm();
 // Declaration for SSD1306 display connected using software SPI (default case):
-#define OLED_MOSI   12
-#define OLED_RESET 13
-#define OLED_CS    15
-#define OLED_CLK   14
-#define OLED_DC    4
+// #define OLED_MOSI   12
+// #define OLED_RESET 13
+// #define OLED_CS    15
+// #define OLED_CLK   14
+// #define OLED_DC    4
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
-  OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+// Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT,
+//   OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 // using namespace std;
 #define PIN 16
 #define pin2 0
@@ -47,10 +47,10 @@ uint32_t otroColor = tira1.Color(75, 12, 110);
 //uint32_t negro = tira1.Color(0, 0, 0);
 
 //Definimos los largos que indican hasta que led debe encenderce para señalar el lugar asignado
-int largo1 = 6;
+int largo1 = 9;
 int* lugar1 = new int[largo1];
 
-int largo2 = 12;
+int largo2 = 15;
 int* lugar2 = new int[largo2];
 
 int largo3 = 41;
@@ -60,18 +60,18 @@ int largo4 = 48;
 int* lugar4 = new int[largo4];
 const int sensor = 2;
 
-const char* ssid = "juaniypia1";
-const char* password = "1110scaffo";
+const char* ssid = "Aloha";
+const char* password = "carlitos2304";
 
 
-char ftp_server[] = "192.168.2.192";
+char ftp_server[] = "192.168.245.61";
 char ftp_user[] = "iotparking";
 char ftp_pass[] = "iotparkingftp";
 char ftp_path[] = "/foto/";
 
 ESP32_FTPClient ftp(ftp_server,ftp_user,ftp_pass, 5000, 2);
 
-String serverName = "172.20.10.2";
+String serverName = "192.168.245.61";
 
 
 const int serverPort = 80;
@@ -90,17 +90,17 @@ void setup() {
   Serial.begin(115200);
   pinMode(sensor,INPUT);
   //inicializamos tira1 y tira2
-  Serial.println("Iniciando display!");
-   if(!display.begin(SSD1306_SWITCHCAPVCC)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
+  // Serial.println("Iniciando display!");
+  //  if(!display.begin(SSD1306_SWITCHCAPVCC)) {
+  //   Serial.println(F("SSD1306 allocation failed"));
+  //   for(;;); // Don't proceed, loop forever
+  // }
 
-  display.display();
+  //display.display();
   delay(2000); // Pause for 2 seconds
 
   //Clear the buffer
-  display.clearDisplay();
+  
 
 
   Serial.println("Iniciando tiras!");
@@ -183,18 +183,18 @@ void setup() {
 
  }
 
-void testdrawchar(char a) {
-  display.clearDisplay();
+// void testdrawchar(char a) {
+//   display.clearDisplay();
 
-  display.setTextSize(10);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+//   display.setTextSize(10);      // Normal 1:1 pixel scale
+//   display.setTextColor(SSD1306_WHITE); // Draw white text
+//   display.setCursor(0, 0);     // Start at top-left corner
+//   display.cp437(true);         // Use full 256 char 'Code Page 437' font
 
-  display.write(a);
+//   display.write(a);
 
-  display.display();
-}
+//   display.display();
+// }
 
 void sendPhotoFTP() {
   String getAll;
@@ -231,12 +231,14 @@ void sendPhotoFTP() {
 void prender(int* lugar, int largo, int numTira, uint32_t color) {
   if (numTira == 1) {
     tira1.clear();
+    tira2.clear();
     for (int i = 0; i < largo; i++) {
       tira1.setPixelColor(lugar[i], color);
     }
     tira1.show();
   } else {
     tira2.clear();
+    tira1.clear();
     for (int i = 0; i < largo; i++) {
       tira2.setPixelColor(lugar[i], color);
     }
@@ -245,12 +247,17 @@ void prender(int* lugar, int largo, int numTira, uint32_t color) {
 }
 
 int getAvailableSpot(){
-
-  http.begin("http://"+serverName + "/photoUploaded");
-  http.GET();
-  int lugar = http.getString().toInt();
+  http.begin(client,"http://"+serverName + "/photoUploaded");
+  String req2 = "";
+  http.POST(req2);
+  delay(5000);
+  String res = http.getString();
+  Serial.println("La respuesta del servidor fue!");
+  Serial.println(res);
+  int lugar = res.toInt();
   Serial.println("Lugar obtenido fue");
   Serial.println(lugar);
+  http.end();
   return lugar;
 }
 
@@ -280,43 +287,53 @@ void upBarrierRequest(int spot){
 
 
 void loop() {
-  Serial.println("Sensor no detecto nada");
+  delay(3000);
+  Serial.println("No detecto");
   if(digitalRead(sensor) == LOW){
     if(digitalRead(sensor != LOW)){
       return;
     }
     Serial.println("Sensor detecto!");
-  delay(1000);
-  Serial.println("Abriendo barrera!");
-  openMainBarrier();
+    delay(1000);
     delay(1000);
   
     sendPhotoFTP();
     int avSpot = getAvailableSpot();
-    upBarrierRequest(avSpot);
+    delay(1000);
+    
     int numTira = 1;
     if(avSpot == 1){
+      upBarrierRequest(avSpot);
       numTira = 2;
       prender(lugar1, largo1, numTira, otroColor);
-        testdrawchar('1');
+        //testdrawchar('1');
       openMainBarrier();
+      delay(15000);
     }else if(avSpot == 2){
+      upBarrierRequest(avSpot);
       numTira = 2;
       prender(lugar2, largo2, numTira, verde);
-      testdrawchar('2');
+      //testdrawchar('2');
       openMainBarrier();
+      delay(15000);
     }else if(avSpot == 3){
+      upBarrierRequest(avSpot);
       prender(lugar3, largo3, numTira, rojo);
-      testdrawchar('3');
+      //testdrawchar('3');
       openMainBarrier();
+      delay(15000);
     }else if(avSpot == 4){
+      upBarrierRequest(avSpot);
       prender(lugar4, largo4, numTira, verde);
-      testdrawchar('4');
+     //testdrawchar('4');
       openMainBarrier();
+      delay(15000);
     }
 
    
-     delay(15000);
-  
+     
+    delay(5000);
     }
+
+    
 }
