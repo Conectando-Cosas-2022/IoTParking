@@ -1,6 +1,6 @@
 //Pin de datos (pin 2 para tira1 y pin 4 para tira2)
-#define PIN 2
-#define pin2 4
+#define PIN 0
+#define pin2 2
 //Cantidad de pixeles de la led
 #define cantPixeles 60
 #include "Adafruit_NeoPixel.h"

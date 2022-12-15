@@ -4,8 +4,8 @@
 #include <Servo.h>
 
 //Pin de datos (pin 2 para tira1 y pin 4 para tira2)
-#define PIN 9
-#define pin2 10
+#define PIN 0
+#define pin2 2
 //Cantidad de pixeles de la led
 #define cantPixeles 60
 #include "Adafruit_NeoPixel.h"
@@ -23,12 +23,12 @@ int angulo;
 String serverName = "192.168.245.61";
 const int sensor1 = 5;
 const int sensor2 = 4;
+//NodeMCU barrera 1 y 2
+int BARRERA1 = 1;
+int BARRERA2 = 2;
 
-int BARRERA1 = 3;
-int BARRERA2 = 4;
-
-int SPOT1 = 1;
-int SPOT2 = 2;
+int SPOT1 = 3;
+int SPOT2 = 4;
 
 const char* ssid = "Aloha";
 const char* password = "carlitos2304";
@@ -77,9 +77,12 @@ void setup() {
     lugar4[i] = i;
   }
 
-
-  myservo1.attach(13);
-  myservo2.attach(15);
+  //Para cable corto NodeMCU
+  //14 y 12
+  //Largo
+  //13 y 15
+  myservo1.attach(14);
+  myservo2.attach(12);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
   Serial.begin(9600);
@@ -108,12 +111,12 @@ void subirBarrera(int barrera) {
 void actionComplete(int spot,bool led) {
   Serial.println("Completando lugar" + String(spot));
   if(!led){
-  String req = "{\"spot\":" + String(spot) +","+ "\"led\":\"false\""+"}";
+  String req = "{\"spot\":" + String(spot) +","+ "\"led\":false"+"}";
   http.begin(client, "http://" + serverName + "/actionComplete");
   http.addHeader("Content-Type", "application/json");
   http.POST(req);
   }else{
-    String req = "{\"ledlugar\":" + String(spot) +","+ "\"led\":\"true\""+"}";
+    String req = "{\"ledlugar\":" + String(spot) +","+ "\"led\":true"+"}";
   http.begin(client, "http://" + serverName + "/actionComplete");
   http.addHeader("Content-Type", "application/json");
   http.POST(req);
@@ -121,16 +124,16 @@ void actionComplete(int spot,bool led) {
 }
 
 void prender(int* lugar, int largo, int numTira, uint32_t color) {
+  tira1.clear();
+  tira1.show();
+  tira2.clear();
+  tira2.show();
   if (numTira == 1) {
-    tira1.clear();
-    tira2.clear();
     for (int i = 0; i < largo; i++) {
       tira1.setPixelColor(lugar[i], color);
     }
     tira1.show();
   } else {
-    tira2.clear();
-    tira1.clear();
     for (int i = 0; i < largo; i++) {
       tira2.setPixelColor(lugar[i], color);
     }
@@ -170,6 +173,8 @@ void pollingDataAction() {
     Serial.println(value);
     Serial.println("Lugar:");
     Serial.println(lugar);
+    Serial.println("lED ES:");
+    Serial.println(led);
     if(!led){
     if (value == true) {
       subirBarrera(lugar);
@@ -177,24 +182,26 @@ void pollingDataAction() {
       bajarBarrera(lugar);
     }
     }else{
-      int led = v["ledlugar"];
+      int ledlug = v["ledlugar"];
+      Serial.println("Led lugar es:");
+      Serial.println(ledlug);
       int numTira = 0;
-      if(led == 1){
+      if(ledlug == 1){
         numTira = 2;
         prender(lugar1, largo1, numTira, otroColor);
-        actionComplete(led,true);
-      }else if(led == 2){
+        actionComplete(ledlug,true);
+      }else if(ledlug == 2){
         numTira = 2;
         prender(lugar2, largo2, numTira, verde);
-        actionComplete(led,true);
-      }else if(led == 3){
+        actionComplete(ledlug,true);
+      }else if(ledlug == 3){
         numTira = 1;
         prender(lugar3, largo3, numTira, rojo);
-        actionComplete(led,true);
+        actionComplete(ledlug,true);
       }else{
         numTira = 1;
        prender(lugar4, largo4, numTira, verde);
-       actionComplete(led,true);
+       actionComplete(ledlug,true);
       }
     }
   }

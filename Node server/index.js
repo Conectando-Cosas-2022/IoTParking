@@ -358,7 +358,7 @@ app.post("/actionComplete",(req,res)=>{
   let led = req.body.led;
   console.log("Estan tratando de terminar la accion led: "+led);
   console.log("Lugar es "+spotdata);
-  if(led == 'false'){
+  if(led == false){
   notificationsPopupPollingData = notificationsPopupPollingData
   .filter(polldata => polldata.lugar != spotdata);
   }else{
@@ -509,7 +509,7 @@ async function obtenerLugarDisponible(matricula) {
     if(resData.spot != -1){
       activePlates.push({matric: matricula, lugar: resData.spot});
       availableSpots[resData.spot-1] = false;
-      notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:resData.spot});
+      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:resData.spot});
       return resData.spot;
     }
 
@@ -519,7 +519,7 @@ async function obtenerLugarDisponible(matricula) {
     if(avspot != -1){
       activePlates.push({matric: matricula, lugar: avspot});
       availableSpots[avspot-1] = false;
-      notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:avspot});
+      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:avspot});
       return avspot;
     }
 
