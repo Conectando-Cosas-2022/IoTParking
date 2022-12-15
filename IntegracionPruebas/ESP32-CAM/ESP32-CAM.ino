@@ -38,12 +38,12 @@ Pwm pwm = Pwm();
 // //alternativa a dar color
 // pixels.setPixelColor(n, color);
 
-Adafruit_NeoPixel tira1 = Adafruit_NeoPixel(cantPixeles, PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel tira2 = Adafruit_NeoPixel(cantPixeles, pin2, NEO_GRB + NEO_KHZ800);
+// Adafruit_NeoPixel tira1 = Adafruit_NeoPixel(cantPixeles, PIN, NEO_GRB + NEO_KHZ800);
+// Adafruit_NeoPixel tira2 = Adafruit_NeoPixel(cantPixeles, pin2, NEO_GRB + NEO_KHZ800);
 
-uint32_t rojo = tira1.Color(255, 0, 0);
-uint32_t verde = tira1.Color(0, 255, 0);
-uint32_t otroColor = tira1.Color(75, 12, 110);
+// uint32_t rojo = tira1.Color(255, 0, 0);
+// uint32_t verde = tira1.Color(0, 255, 0);
+// uint32_t otroColor = tira1.Color(75, 12, 110);
 //uint32_t negro = tira1.Color(0, 0, 0);
 
 //Definimos los largos que indican hasta que led debe encenderce para señalar el lugar asignado
@@ -60,8 +60,8 @@ int largo4 = 48;
 int* lugar4 = new int[largo4];
 const int sensor = 2;
 
-const char* ssid = "Aloha";
-const char* password = "carlitos2304";
+const char* ssid = "iPhone de Juan Ignacio";
+const char* password = "jpscaffo";
 
 
 char ftp_server[] = "192.168.245.61";
@@ -228,23 +228,23 @@ void sendPhotoFTP() {
 
 }
 
-void prender(int* lugar, int largo, int numTira, uint32_t color) {
-  if (numTira == 1) {
-    tira1.clear();
-    tira2.clear();
-    for (int i = 0; i < largo; i++) {
-      tira1.setPixelColor(lugar[i], color);
-    }
-    tira1.show();
-  } else {
-    tira2.clear();
-    tira1.clear();
-    for (int i = 0; i < largo; i++) {
-      tira2.setPixelColor(lugar[i], color);
-    }
-    tira2.show();
-  }
-}
+// void prender(int* lugar, int largo, int numTira, uint32_t color) {
+//   if (numTira == 1) {
+//     tira1.clear();
+//     tira2.clear();
+//     for (int i = 0; i < largo; i++) {
+//       tira1.setPixelColor(lugar[i], color);
+//     }
+//     tira1.show();
+//   } else {
+//     tira2.clear();
+//     tira1.clear();
+//     for (int i = 0; i < largo; i++) {
+//       tira2.setPixelColor(lugar[i], color);
+//     }
+//     tira2.show();
+//   }
+// }
 
 int getAvailableSpot(){
   http.begin(client,"http://"+serverName + "/photoUploaded");
@@ -294,9 +294,6 @@ void loop() {
       return;
     }
     Serial.println("Sensor detecto!");
-    delay(1000);
-    delay(1000);
-  
     sendPhotoFTP();
     int avSpot = getAvailableSpot();
     delay(1000);
@@ -304,30 +301,16 @@ void loop() {
     int numTira = 1;
     if(avSpot == 1){
       upBarrierRequest(avSpot);
-      numTira = 2;
-      prender(lugar1, largo1, numTira, otroColor);
-        //testdrawchar('1');
-      openMainBarrier();
       delay(15000);
     }else if(avSpot == 2){
       upBarrierRequest(avSpot);
-      numTira = 2;
-      prender(lugar2, largo2, numTira, verde);
       //testdrawchar('2');
-      openMainBarrier();
       delay(15000);
     }else if(avSpot == 3){
       upBarrierRequest(avSpot);
-      prender(lugar3, largo3, numTira, rojo);
-      //testdrawchar('3');
-      openMainBarrier();
       delay(15000);
     }else if(avSpot == 4){
       upBarrierRequest(avSpot);
-      prender(lugar4, largo4, numTira, verde);
-     //testdrawchar('4');
-      openMainBarrier();
-      delay(15000);
     }
 
    

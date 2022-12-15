@@ -2,6 +2,9 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <Servo.h>
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x3F,16,2);
 
 //Pin de datos (pin 2 para tira1 y pin 4 para tira2)
 #define PIN 0
@@ -17,10 +20,11 @@ const size_t CAPACITY = JSON_ARRAY_SIZE(10);
 
 Servo myservo1;
 Servo myservo2;
+Servo myservo3;
 HTTPClient http;
 WiFiClient client;
 int angulo;
-String serverName = "192.168.245.61";
+String serverName = "172.20.10.9";
 const int sensor1 = 5;
 const int sensor2 = 4;
 //NodeMCU barrera 1 y 2
@@ -30,8 +34,8 @@ int BARRERA2 = 2;
 int SPOT1 = 3;
 int SPOT2 = 4;
 
-const char* ssid = "Aloha";
-const char* password = "carlitos2304";
+const char* ssid = "iPhone de Juan Ignacio";
+const char* password = "jpscaffo";
 int previousState1 = HIGH;
 int currentState1 = LOW;
 int previousState2 = HIGH;
@@ -61,8 +65,11 @@ int* lugar4 = new int[largo4];
 void setup() {
 
   tira1.begin();
-  tira2.begin();
-
+  tira2.begin();  
+  
+  lcd.init();
+  lcd.clear();         
+  lcd.backlight(); 
   //Rellenamos los vectores de las led que deben ir encendidas
   for (int i = 0; i < largo1; i++) {
     lugar1[i] = i;
@@ -83,6 +90,7 @@ void setup() {
   //13 y 15
   myservo1.attach(14);
   myservo2.attach(12);
+  myservo3.attach(15);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
   Serial.begin(9600);
@@ -100,26 +108,40 @@ void subirBarrera(int barrera) {
     myservo1.write(angulo);
     Serial.println("Barrera 1 tratando de subir!");
     Serial.println(angulo);
-    actionComplete(barrera,false);
+    actionComplete(barrera,false,false);
   } else if (barrera == BARRERA2) {
     angulo = 180;
     myservo2.write(angulo);
-    actionComplete(barrera,false);
+    actionComplete(barrera,false,false);
+  }else if(barrera == -5){
+    angulo = 180;
+    myservo3.write(angulo);
+    actionComplete(barrera,false,false);
+    delay(5000);
+    angulo = 0;
+    myservo3.write(angulo);
+
   }
 }
 
-void actionComplete(int spot,bool led) {
+void actionComplete(int spot,bool led,bool display) {
   Serial.println("Completando lugar" + String(spot));
   if(!led){
-  String req = "{\"spot\":" + String(spot) +","+ "\"led\":false"+"}";
+  String req = "{\"spot\":" + String(spot) +","+ "\"led\":false,"+"\"display\":false"+"}";
+  http.begin(client, "http://" + serverName + "/actionComplete");
+  http.addHeader("Content-Type", "application/json");
+  http.POST(req);
+  }else if(!display){
+    String req = "{\"ledlugar\":" + String(spot) +","+ "\"led\":true,"+"\"display\":false"+"}";
   http.begin(client, "http://" + serverName + "/actionComplete");
   http.addHeader("Content-Type", "application/json");
   http.POST(req);
   }else{
-    String req = "{\"ledlugar\":" + String(spot) +","+ "\"led\":true"+"}";
+    String req = "{\"displayspot\":" + String(spot) +","+ "\"led\":false,"+"\"display\":true"+"}";
   http.begin(client, "http://" + serverName + "/actionComplete");
   http.addHeader("Content-Type", "application/json");
   http.POST(req);
+
   }
 }
 
@@ -146,11 +168,11 @@ void bajarBarrera(int barrera) {
   if (barrera == BARRERA1) {
     angulo = 0;
     myservo1.write(angulo);
-    actionComplete(barrera,false);
+    actionComplete(barrera,false,false);
   } else if (barrera == BARRERA2) {
     angulo = 0;
     myservo2.write(angulo);
-    actionComplete(barrera,false);
+    actionComplete(barrera,false,false);
   }
 }
 
@@ -169,19 +191,20 @@ void pollingDataAction() {
 
     bool value = v["arriba"];
     bool led = v["led"];
+    bool display = v["display"];
     int lugar = v["lugar"];
     Serial.println(value);
     Serial.println("Lugar:");
     Serial.println(lugar);
     Serial.println("lED ES:");
     Serial.println(led);
-    if(!led){
+    if(!led && !display){
     if (value == true) {
       subirBarrera(lugar);
     } else {
       bajarBarrera(lugar);
     }
-    }else{
+    }else if(!display && led){
       int ledlug = v["ledlugar"];
       Serial.println("Led lugar es:");
       Serial.println(ledlug);
@@ -189,20 +212,26 @@ void pollingDataAction() {
       if(ledlug == 1){
         numTira = 2;
         prender(lugar1, largo1, numTira, otroColor);
-        actionComplete(ledlug,true);
+        actionComplete(ledlug,true,false);
       }else if(ledlug == 2){
         numTira = 2;
         prender(lugar2, largo2, numTira, verde);
-        actionComplete(ledlug,true);
+        actionComplete(ledlug,true,false);
       }else if(ledlug == 3){
         numTira = 1;
         prender(lugar3, largo3, numTira, rojo);
-        actionComplete(ledlug,true);
+        actionComplete(ledlug,true,false);
       }else{
         numTira = 1;
        prender(lugar4, largo4, numTira, verde);
-       actionComplete(ledlug,true);
+       actionComplete(ledlug,true,false);
       }
+    }else{
+      int dispSpot = v["displayspot"];
+      lcd.clear(); 
+      lcd.setCursor(0,0);   //Set cursor to character 2 on line 0
+      lcd.print("Tu lugar es: "+dispSpot);
+      actionComplete(dispSpot,false,true);    
     }
   }
 }

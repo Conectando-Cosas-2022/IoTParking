@@ -331,21 +331,21 @@ app.post("/subirBarrera",(req,res)=>{
   let spot = req.body.spot;
   let upAction = true;
 
-  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1});
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1,display:false,displayspot:0});
   res.send("success");
 });
 
 app.post("/bajarBarrera",(req,res)=>{
   let spot = req.body.spot;
   let upAction = false;
-  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1});
+  notificationsPopupPollingData.push({lugar: spot, arriba:upAction,led:false,ledlugar:-1,display:false,displayspot:0});
   res.send("success");
 });
 
 app.post("/led",(req,res)=>{
   let spotled = req.body.led;
   let upAction = false;
-  notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:spotled});
+  notificationsPopupPollingData.push({lugar: -1, arriba:upAction,led:true,ledlugar:spotled,display:false,displayspot:0});
   res.send("success");
 });
 
@@ -356,15 +356,20 @@ app.get("/esp8266pollingdata",(req,res)=>{
 app.post("/actionComplete",(req,res)=>{
   let spotdata = req.body.spot;
   let led = req.body.led;
+  let display = req.body.display;
   console.log("Estan tratando de terminar la accion led: "+led);
   console.log("Lugar es "+spotdata);
-  if(led == false){
+  if(led == false && display == false){
   notificationsPopupPollingData = notificationsPopupPollingData
   .filter(polldata => polldata.lugar != spotdata);
-  }else{
+  }else if(display == false && led){
     let spotled = req.body.ledlugar;
     notificationsPopupPollingData = notificationsPopupPollingData
   .filter(polldata => polldata.ledlugar != spotled);
+  }else{
+    let displayspot = req.body.displayspot;
+    notificationsPopupPollingData = notificationsPopupPollingData
+  .filter(polldata => polldata.displayspot != displayspot);
   }
   res.send("success");
 });
@@ -509,7 +514,8 @@ async function obtenerLugarDisponible(matricula) {
     if(resData.spot != -1){
       activePlates.push({matric: matricula, lugar: resData.spot});
       availableSpots[resData.spot-1] = false;
-      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:resData.spot});
+      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:resData.spot,display:false,displayspot:0});
+      notificationsPopupPollingData.push({lugar: -5, arriba:true,led:false,ledlugar:-1,display:false,displayspot:0});
       return resData.spot;
     }
 
@@ -519,7 +525,8 @@ async function obtenerLugarDisponible(matricula) {
     if(avspot != -1){
       activePlates.push({matric: matricula, lugar: avspot});
       availableSpots[avspot-1] = false;
-      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:avspot});
+      notificationsPopupPollingData.push({lugar: -1, arriba:true,led:true,ledlugar:avspot,display:false,displayspot:0});
+      notificationsPopupPollingData.push({lugar: -5, arriba:true,led:false,ledlugar:-1,display:false,displayspot:0});
       return avspot;
     }
 
