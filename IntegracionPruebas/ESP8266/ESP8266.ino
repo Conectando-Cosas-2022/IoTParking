@@ -4,7 +4,7 @@
 #include <Servo.h>
 #include <LiquidCrystal_I2C.h>
 
-LiquidCrystal_I2C lcd(0x3F,16,2);
+LiquidCrystal_I2C lcd(0x3F,16,9);
 
 //Pin de datos (pin 2 para tira1 y pin 4 para tira2)
 #define PIN 0
@@ -90,7 +90,7 @@ void setup() {
   //13 y 15
   myservo1.attach(14);
   myservo2.attach(12);
-  myservo3.attach(15);
+  //myservo3.attach(15);
   pinMode(sensor1, INPUT);
   pinMode(sensor2, INPUT);
   Serial.begin(9600);

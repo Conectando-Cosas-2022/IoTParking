@@ -64,7 +64,7 @@ const char* ssid = "iPhone de Juan Ignacio";
 const char* password = "jpscaffo";
 
 
-char ftp_server[] = "192.168.245.61";
+char ftp_server[] = "172.20.10.9";
 char ftp_user[] = "iotparking";
 char ftp_pass[] = "iotparkingftp";
 char ftp_path[] = "/foto/";
